@@ -257,8 +257,12 @@ function printReport(kind){
   const sos = soRows().slice().sort((a,b)=>b["Achievement %"]-a["Achievement %"]);
   const comb = combinedRows().slice().sort((a,b)=>b["Achievement %"]-a["Achievement %"]);
 
-  if(kind==="bo"){
-    document.getElementById("reportBOBody").innerHTML = table(bos,[
+  let title = "";
+  let body = "";
+
+  if(kind === "bo"){
+    title = "Gudivada Sub Division — BO Performance";
+    body = table(bos,[
       {label:"BO Name",key:"Office Name"},
       {label:"Parent SO",key:"Parent SO"},
       {label:"Opened",key:"Accounts Opened",num:true},
@@ -267,10 +271,9 @@ function printReport(kind){
       {label:"Proportionate Target",key:"Proportionate Target",num:true},
       {label:"Achievement",key:"Achievement %",num:true}
     ],true);
-  }
-
-  if(kind==="so"){
-    document.getElementById("reportSOBody").innerHTML = table(sos,[
+  } else if(kind === "so"){
+    title = "Gudivada Sub Division — SO Performance";
+    body = table(sos,[
       {label:"SO Name",key:"Office Name"},
       {label:"Opened",key:"Accounts Opened",num:true},
       {label:"Closed",key:"Accounts Closed",num:true},
@@ -278,10 +281,9 @@ function printReport(kind){
       {label:"Proportionate Target",key:"Proportionate Target",num:true},
       {label:"Achievement",key:"Achievement %",num:true}
     ],true);
-  }
-
-  if(kind==="combined"){
-    document.getElementById("reportCombinedBody").innerHTML = table(comb,[
+  } else {
+    title = "Gudivada Sub Division — SO-wise Consolidated Performance";
+    body = table(comb,[
       {label:"SO Name",key:"SO Name"},
       {label:"BOs",key:"BOs",num:true},
       {label:"Combined Target",key:"Combined Target",num:true},
@@ -292,9 +294,45 @@ function printReport(kind){
     ],true);
   }
 
-  document.body.classList.remove("print-bo","print-so","print-combined");
-  document.body.classList.add("print-"+kind);
-  window.print();
+  // Open a completely separate print document. This prevents the dashboard's
+  // other tabs/cards/panels from being included in the PDF.
+  const w = window.open("", "_blank", "width=1200,height=800");
+  if(!w){
+    alert("Please allow pop-ups for this dashboard to generate the PDF report.");
+    return;
+  }
+
+  w.document.open();
+  w.document.write(`<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>${title}</title>
+<style>
+  @page { size: A4 landscape; margin: 10mm; }
+  * { box-sizing:border-box; }
+  body { font-family:Arial,sans-serif; color:#17202a; margin:0; }
+  h1 { font-size:20px; margin:0 0 5px; color:#173f5f; }
+  .date { font-size:11px; margin-bottom:12px; }
+  table { width:100%; border-collapse:collapse; font-size:9px; }
+  th { background:#173f5f; color:white; padding:6px 5px; text-align:left; }
+  td { padding:5px; border-bottom:1px solid #ddd; }
+  .num { text-align:right; }
+  tr.g td { background:#c6efce; }
+  tr.y td { background:#ffeb9c; }
+  tr.o td { background:#fce4d6; }
+  tr.r td { background:#ffc7ce; }
+  @media print { body { -webkit-print-color-adjust:exact; print-color-adjust:exact; } }
+</style>
+</head>
+<body>
+<h1>${title}</h1>
+<div class="date"><b>As on Date: ${document.getElementById("dateBadge")?.textContent?.replace("As on Date: ","") || "22-08-2026"}</b></div>
+${body}
+<script>window.onload=function(){setTimeout(function(){window.print();},300);};<\/script>
+</body>
+</html>`);
+  w.document.close();
 }
 function render(){
   fillSOFilter();
