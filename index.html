@@ -64,17 +64,6 @@ tr.g td{background:#c6efce} tr.y td{background:#ffeb9c} tr.o td{background:#fce4
 @media(max-width:700px){.cards{grid-template-columns:1fr 1fr}.grid{grid-template-columns:1fr}.controls-top{grid-template-columns:1fr}.mini-grid{grid-template-columns:1fr 1fr}header{padding:18px}h1{font-size:23px}.wrap{padding:12px}}
 .report-print-only{display:none}
 @media print{
-  body.print-bo #reportSO,
-  body.print-bo #reportCombined{display:none!important}
-  body.print-so #reportBO,
-  body.print-so #reportCombined{display:none!important}
-  body.print-combined #reportBO,
-  body.print-combined #reportSOHO{display:none!important}
-  body.print-bo #reportBO,
-  body.print-so #reportSO,
-  body.print-combined #reportCombined{display:block!important}
-}
-@media print{
  body{background:#fff} header,.controls-top,.tabs,.footer,.no-print{display:none!important}
  .panel{display:block!important} .box,.hero,.card{box-shadow:none;border:1px solid #ccc}
 }
@@ -109,9 +98,9 @@ tr.g td{background:#c6efce} tr.y td{background:#ffeb9c} tr.o td{background:#fce4
 <button onclick="tab('consolidated',this)">SO Drilldown</button>
 <button onclick="tab('lookup',this)">Office Lookup</button>
 <button onclick="tab('holidays',this)">Closed Holidays 2026</button>
-<button onclick="printReport('bo')">BO Performance — PDF</button>
-<button onclick="printReport('so')">SO Performance — PDF</button>
-<button onclick="printReport('combined')">SO-wise Consolidated — PDF</button>
+<button onclick="openDedicatedReport('bo')">BO Performance — PDF</button>
+<button onclick="openDedicatedReport('so')">SO Performance — PDF</button>
+<button onclick="openDedicatedReport('combined')">SO-wise Consolidated — PDF</button>
 </div>
 
 <section id="overview" class="panel active">
@@ -252,88 +241,100 @@ function filteredAll(){
 }
 
 
-function printReport(kind){
+
+
+function openDedicatedReport(kind){
   const bos = boRows().slice().sort((a,b)=>b["Achievement %"]-a["Achievement %"]);
   const sos = soRows().slice().sort((a,b)=>b["Achievement %"]-a["Achievement %"]);
   const comb = combinedRows().slice().sort((a,b)=>b["Achievement %"]-a["Achievement %"]);
+  const asOn = (document.getElementById("dateBadge")?.textContent || "As on Date: 22-08-2026")
+                 .replace("As on Date: ","");
 
-  let title = "";
-  let body = "";
-
+  let title, rows, cols;
   if(kind === "bo"){
     title = "Gudivada Sub Division — BO Performance";
-    body = table(bos,[
-      {label:"BO Name",key:"Office Name"},
-      {label:"Parent SO",key:"Parent SO"},
-      {label:"Opened",key:"Accounts Opened",num:true},
-      {label:"Closed",key:"Accounts Closed",num:true},
-      {label:"Net Accounts",key:"Net Accounts",num:true},
-      {label:"Proportionate Target",key:"Proportionate Target",num:true},
-      {label:"Achievement",key:"Achievement %",num:true}
-    ],true);
+    rows = bos;
+    cols = [
+      ["BO Name","Office Name"],["Parent SO","Parent SO"],
+      ["Opened","Accounts Opened"],["Closed","Accounts Closed"],
+      ["Net Accounts","Net Accounts"],["Proportionate Target","Proportionate Target"],
+      ["Achievement","Achievement %"],["Yet to Open","Yet to Open"]
+    ];
   } else if(kind === "so"){
     title = "Gudivada Sub Division — SO Performance";
-    body = table(sos,[
-      {label:"SO Name",key:"Office Name"},
-      {label:"Opened",key:"Accounts Opened",num:true},
-      {label:"Closed",key:"Accounts Closed",num:true},
-      {label:"Net Accounts",key:"Net Accounts",num:true},
-      {label:"Proportionate Target",key:"Proportionate Target",num:true},
-      {label:"Achievement",key:"Achievement %",num:true}
-    ],true);
+    rows = sos;
+    cols = [
+      ["SO Name","Office Name"],["Opened","Accounts Opened"],
+      ["Closed","Accounts Closed"],["Net Accounts","Net Accounts"],
+      ["Proportionate Target","Proportionate Target"],["Achievement","Achievement %"],["Yet to Open","Yet to Open"]
+    ];
   } else {
     title = "Gudivada Sub Division — SO-wise Consolidated Performance";
-    body = table(comb,[
-      {label:"SO Name",key:"SO Name"},
-      {label:"BOs",key:"BOs",num:true},
-      {label:"Combined Target",key:"Combined Target",num:true},
-      {label:"Proportionate Target",key:"Proportionate Target",num:true},
-      {label:"Net Accounts",key:"Net Accounts",num:true},
-      {label:"Achievement",key:"Achievement %",num:true},
-      {label:"Yet to Achieve",key:"Yet to Achieve",num:true}
-    ],true);
+    rows = comb;
+    cols = [
+      ["SO Name","SO Name"],["BOs","BOs"],["Combined Target","Combined Target"],
+      ["Proportionate Target","Proportionate Target"],["Net Accounts","Net Accounts"],
+      ["Achievement","Achievement %"],["Yet to Achieve","Yet to Achieve"],["Yet to Open","Yet to Open"]
+    ];
   }
 
-  // Open a completely separate print document. This prevents the dashboard's
-  // other tabs/cards/panels from being included in the PDF.
-  const w = window.open("", "_blank", "width=1200,height=800");
-  if(!w){
-    alert("Please allow pop-ups for this dashboard to generate the PDF report.");
-    return;
-  }
+  const fmt2 = v => Number(v||0).toLocaleString("en-IN");
+  const pv = v => Number(v||0).toFixed(1) + "%";
+  const cls = p => Number(p)>=100 ? "g" : Number(p)>=80 ? "y" : Number(p)>=60 ? "o" : "r";
 
-  w.document.open();
-  w.document.write(`<!doctype html>
-<html>
-<head>
-<meta charset="utf-8">
+  let html = `<!doctype html><html><head><meta charset="utf-8">
 <title>${title}</title>
 <style>
-  @page { size: A4 landscape; margin: 10mm; }
-  * { box-sizing:border-box; }
-  body { font-family:Arial,sans-serif; color:#17202a; margin:0; }
-  h1 { font-size:20px; margin:0 0 5px; color:#173f5f; }
-  .date { font-size:11px; margin-bottom:12px; }
-  table { width:100%; border-collapse:collapse; font-size:9px; }
-  th { background:#173f5f; color:white; padding:6px 5px; text-align:left; }
-  td { padding:5px; border-bottom:1px solid #ddd; }
-  .num { text-align:right; }
-  tr.g td { background:#c6efce; }
-  tr.y td { background:#ffeb9c; }
-  tr.o td { background:#fce4d6; }
-  tr.r td { background:#ffc7ce; }
-  @media print { body { -webkit-print-color-adjust:exact; print-color-adjust:exact; } }
-</style>
-</head>
-<body>
-<h1>${title}</h1>
-<div class="date"><b>As on Date: ${document.getElementById("dateBadge")?.textContent?.replace("As on Date: ","") || "22-08-2026"}</b></div>
-${body}
-<script>window.onload=function(){setTimeout(function(){window.print();},300);};<\/script>
-</body>
-</html>`);
+@page{size:A4 landscape;margin:8mm}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:#fff;color:#17202a;font-family:Arial,sans-serif}
+body{padding:0}
+h1{font-size:19px;color:#173f5f;margin:0 0 4px}
+.meta{font-size:10px;margin:0 0 10px}
+table{width:100%;border-collapse:collapse;table-layout:auto;font-size:8.5px}
+th{background:#173f5f;color:#fff;padding:5px 4px;border:1px solid #173f5f;text-align:left}
+td{padding:4px;border:1px solid #d9dee5}
+.num{text-align:right}
+tr.g td{background:#c6efce}tr.y td{background:#ffeb9c}tr.o td{background:#fce4d6}tr.r td{background:#ffc7ce}
+.actions{margin:0 0 10px}
+.actions button{padding:7px 12px;margin-right:6px;border:1px solid #aaa;background:#f5f5f5;border-radius:5px}
+@media print{.actions{display:none!important}body{-webkit-print-color-adjust:exact;print-color-adjust:exact}}
+</style></head><body>
+<div class="actions"><button onclick="window.print()">Print / Save PDF</button>
+<button onclick="window.close()">Close</button></div>
+<h1>${title}</h1><div class="meta"><b>As on Date: ${asOn}</b> &nbsp; | &nbsp; Gudivada Sub Division</div>
+<table><thead><tr><th>Rank</th>`;
+
+  cols.forEach(c => html += `<th>${c[0]}</th>`);
+  html += `</tr></thead><tbody>`;
+
+  rows.forEach((r,i)=>{
+    const p = Number(r["Achievement %"]||0);
+    html += `<tr class="${cls(p)}"><td>${i+1}</td>`;
+    cols.forEach(c=>{
+      const key=c[1];
+      let v=r[key];
+      if(key==="Achievement %") v=pv(v);
+      else if(["Accounts Opened","Accounts Closed","Net Accounts","Proportionate Target","Combined Target","Yet to Achieve","Yet to Open","BOs"].includes(key)) v=fmt2(v);
+      html += `<td class="${["Accounts Opened","Accounts Closed","Net Accounts","Proportionate Target","Combined Target","Yet to Achieve","BOs","Achievement %"].includes(key)?"num":""}">${v ?? ""}</td>`;
+    });
+    html += `</tr>`;
+  });
+
+  html += `</tbody></table>
+<script>
+window.onload=function(){
+  setTimeout(function(){window.print();},250);
+};
+</script></body></html>`;
+
+  const w=window.open("","_blank","width=1200,height=800");
+  if(!w){alert("Please allow pop-ups for this dashboard.");return;}
+  w.document.open();
+  w.document.write(html);
   w.document.close();
 }
+
 function render(){
   fillSOFilter();
   const rows=allRows(), bos=boRows(), sos=soRows(), comb=combinedRows();
