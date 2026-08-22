@@ -98,9 +98,9 @@ tr.g td{background:#c6efce} tr.y td{background:#ffeb9c} tr.o td{background:#fce4
 <button onclick="tab('consolidated',this)">SO Drilldown</button>
 <button onclick="tab('lookup',this)">Office Lookup</button>
 <button onclick="tab('holidays',this)">Closed Holidays 2026</button>
-<button onclick="openDedicatedReport('bo')">BO Performance — PDF</button>
-<button onclick="openDedicatedReport('so')">SO Performance — PDF</button>
-<button onclick="openDedicatedReport('combined')">SO-wise Consolidated — PDF</button>
+<button onclick="window.open('BO_Performance_Report.html','_blank')">BO Performance — PDF</button>
+<button onclick="window.open('SO_Performance_Report.html','_blank')">SO Performance — PDF</button>
+<button onclick="window.open('SO_Consolidated_Report.html','_blank')">SO-wise Consolidated — PDF</button>
 </div>
 
 <section id="overview" class="panel active">
@@ -148,10 +148,6 @@ tr.g td{background:#c6efce} tr.y td{background:#ffeb9c} tr.o td{background:#fce4
 </div>
 
 
-<div id="reportBO" class="report-print-only">
-  <h1>Gudivada Sub Division — BO Performance</h1>
-  <p><b>As on Date: 22-08-2026</b></p>
-  <div id="reportBOBody"></div>
 </div>
 
 <div id="reportSOHO" class="report-print-only">
@@ -160,16 +156,8 @@ tr.g td{background:#c6efce} tr.y td{background:#ffeb9c} tr.o td{background:#fce4
   <div id="reportSOHOBody"></div>
 </div>
 
-<div id="reportSO" class="report-print-only">
-  <h1>Gudivada Sub Division — SO Performance</h1>
-  <p><b>As on Date: 22-08-2026</b></p>
-  <div id="reportSOBody"></div>
 </div>
 
-<div id="reportCombined" class="report-print-only">
-  <h1>Gudivada Sub Division — SO-wise Consolidated Performance</h1>
-  <p><b>As on Date: 22-08-2026</b></p>
-  <div id="reportCombinedBody"></div>
 </div>
 
 <script>
