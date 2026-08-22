@@ -64,6 +64,17 @@ tr.g td{background:#c6efce} tr.y td{background:#ffeb9c} tr.o td{background:#fce4
 @media(max-width:700px){.cards{grid-template-columns:1fr 1fr}.grid{grid-template-columns:1fr}.controls-top{grid-template-columns:1fr}.mini-grid{grid-template-columns:1fr 1fr}header{padding:18px}h1{font-size:23px}.wrap{padding:12px}}
 .report-print-only{display:none}
 @media print{
+  body.print-bo #reportSOHO,
+  body.print-bo #reportCombined{display:none!important}
+  body.print-soho #reportBO,
+  body.print-soho #reportCombined{display:none!important}
+  body.print-combined #reportBO,
+  body.print-combined #reportSOHO{display:none!important}
+  body.print-bo #reportBO,
+  body.print-soho #reportSOHO,
+  body.print-combined #reportCombined{display:block!important}
+}
+@media print{
  body{background:#fff} header,.controls-top,.tabs,.footer,.no-print{display:none!important}
  .panel{display:block!important} .box,.hero,.card{box-shadow:none;border:1px solid #ccc}
 }
@@ -99,7 +110,7 @@ tr.g td{background:#c6efce} tr.y td{background:#ffeb9c} tr.o td{background:#fce4
 <button onclick="tab('lookup',this)">Office Lookup</button>
 <button onclick="tab('holidays',this)">Closed Holidays 2026</button>
 <button onclick="window.open('BO_Performance_Report.html','_blank')">BO Performance — PDF</button>
-<button onclick="window.open('SO_Performance_Report.html','_blank')">SO Performance — PDF</button>
+<button onclick="printReport('soho')">SO + HO Performance — PDF</button>
 <button onclick="window.open('SO_Consolidated_Report.html','_blank')">SO-wise Consolidated — PDF</button>
 </div>
 
@@ -148,6 +159,10 @@ tr.g td{background:#c6efce} tr.y td{background:#ffeb9c} tr.o td{background:#fce4
 </div>
 
 
+<div id="reportBO" class="report-print-only">
+  <h1>Gudivada Sub Division — BO Performance</h1>
+  <p><b>As on Date: 22-08-2026</b></p>
+  <div id="reportBOBody"></div>
 </div>
 
 <div id="reportSOHO" class="report-print-only">
@@ -156,8 +171,10 @@ tr.g td{background:#c6efce} tr.y td{background:#ffeb9c} tr.o td{background:#fce4
   <div id="reportSOHOBody"></div>
 </div>
 
-</div>
-
+<div id="reportCombined" class="report-print-only">
+  <h1>Gudivada Sub Division — SO-wise Consolidated Performance</h1>
+  <p><b>As on Date: 22-08-2026</b></p>
+  <div id="reportCombinedBody"></div>
 </div>
 
 <script>
@@ -229,98 +246,49 @@ function filteredAll(){
 }
 
 
-
-
-function openDedicatedReport(kind){
+function printReport(kind){
+  // Build the selected report using the same live dashboard data.
   const bos = boRows().slice().sort((a,b)=>b["Achievement %"]-a["Achievement %"]);
   const sos = soRows().slice().sort((a,b)=>b["Achievement %"]-a["Achievement %"]);
   const comb = combinedRows().slice().sort((a,b)=>b["Achievement %"]-a["Achievement %"]);
-  const asOn = (document.getElementById("dateBadge")?.textContent || "As on Date: 22-08-2026")
-                 .replace("As on Date: ","");
 
-  let title, rows, cols;
-  if(kind === "bo"){
-    title = "Gudivada Sub Division — BO Performance";
-    rows = bos;
-    cols = [
-      ["BO Name","Office Name"],["Parent SO","Parent SO"],
-      ["Opened","Accounts Opened"],["Closed","Accounts Closed"],
-      ["Net Accounts","Net Accounts"],["Proportionate Target","Proportionate Target"],
-      ["Achievement","Achievement %"],["Yet to Open","Yet to Open"]
-    ];
-  } else if(kind === "so"){
-    title = "Gudivada Sub Division — SO Performance";
-    rows = sos;
-    cols = [
-      ["SO Name","Office Name"],["Opened","Accounts Opened"],
-      ["Closed","Accounts Closed"],["Net Accounts","Net Accounts"],
-      ["Proportionate Target","Proportionate Target"],["Achievement","Achievement %"],["Yet to Open","Yet to Open"]
-    ];
-  } else {
-    title = "Gudivada Sub Division — SO-wise Consolidated Performance";
-    rows = comb;
-    cols = [
-      ["SO Name","SO Name"],["BOs","BOs"],["Combined Target","Combined Target"],
-      ["Proportionate Target","Proportionate Target"],["Net Accounts","Net Accounts"],
-      ["Achievement","Achievement %"],["Yet to Achieve","Yet to Achieve"],["Yet to Open","Yet to Open"]
-    ];
-  }
+  document.getElementById("reportBOBody").innerHTML = table(bos,[
+    {label:"Office",key:"Office Name"},
+    {label:"Parent SO",key:"Parent SO"},
+    {label:"Opened",key:"Accounts Opened",num:true},
+    {label:"Closed",key:"Accounts Closed",num:true},
+    {label:"Net",key:"Net Accounts",num:true},
+    {label:"Proportionate Target",key:"Proportionate Target",num:true},
+    {label:"Achievement",key:"Achievement %",num:true}
+  ],true);
 
-  const fmt2 = v => Number(v||0).toLocaleString("en-IN");
-  const pv = v => Number(v||0).toFixed(1) + "%";
-  const cls = p => Number(p)>=100 ? "g" : Number(p)>=80 ? "y" : Number(p)>=60 ? "o" : "r";
+  // SO + HO: include all SOs and any HO records available in the source data.
+  const ho = allRows().filter(r=>r["Office Type"]==="HO")
+    .sort((a,b)=>b["Achievement %"]-a["Achievement %"]);
+  const soho = sos.concat(ho);
+  document.getElementById("reportSOHOBody").innerHTML = table(soho,[
+    {label:"Office",key:"Office Name"},
+    {label:"Type",key:"Office Type"},
+    {label:"Opened",key:"Accounts Opened",num:true},
+    {label:"Closed",key:"Accounts Closed",num:true},
+    {label:"Net",key:"Net Accounts",num:true},
+    {label:"Proportionate Target",key:"Proportionate Target",num:true},
+    {label:"Achievement",key:"Achievement %",num:true}
+  ],true);
 
-  let html = `<!doctype html><html><head><meta charset="utf-8">
-<title>${title}</title>
-<style>
-@page{size:A4 landscape;margin:8mm}
-*{box-sizing:border-box}
-html,body{margin:0;padding:0;background:#fff;color:#17202a;font-family:Arial,sans-serif}
-body{padding:0}
-h1{font-size:19px;color:#173f5f;margin:0 0 4px}
-.meta{font-size:10px;margin:0 0 10px}
-table{width:100%;border-collapse:collapse;table-layout:auto;font-size:8.5px}
-th{background:#173f5f;color:#fff;padding:5px 4px;border:1px solid #173f5f;text-align:left}
-td{padding:4px;border:1px solid #d9dee5}
-.num{text-align:right}
-tr.g td{background:#c6efce}tr.y td{background:#ffeb9c}tr.o td{background:#fce4d6}tr.r td{background:#ffc7ce}
-.actions{margin:0 0 10px}
-.actions button{padding:7px 12px;margin-right:6px;border:1px solid #aaa;background:#f5f5f5;border-radius:5px}
-@media print{.actions{display:none!important}body{-webkit-print-color-adjust:exact;print-color-adjust:exact}}
-</style></head><body>
-<div class="actions"><button onclick="window.print()">Print / Save PDF</button>
-<button onclick="window.close()">Close</button></div>
-<h1>${title}</h1><div class="meta"><b>As on Date: ${asOn}</b> &nbsp; | &nbsp; Gudivada Sub Division</div>
-<table><thead><tr><th>Rank</th>`;
+  document.getElementById("reportCombinedBody").innerHTML = table(comb,[
+    {label:"SO",key:"SO Name"},
+    {label:"BOs",key:"BOs",num:true},
+    {label:"Combined Target",key:"Combined Target",num:true},
+    {label:"Proportionate Target",key:"Proportionate Target",num:true},
+    {label:"Net Accounts",key:"Net Accounts",num:true},
+    {label:"Achievement",key:"Achievement %",num:true},
+    {label:"Yet to Achieve",key:"Yet to Achieve",num:true}
+  ],true);
 
-  cols.forEach(c => html += `<th>${c[0]}</th>`);
-  html += `</tr></thead><tbody>`;
-
-  rows.forEach((r,i)=>{
-    const p = Number(r["Achievement %"]||0);
-    html += `<tr class="${cls(p)}"><td>${i+1}</td>`;
-    cols.forEach(c=>{
-      const key=c[1];
-      let v=r[key];
-      if(key==="Achievement %") v=pv(v);
-      else if(["Accounts Opened","Accounts Closed","Net Accounts","Proportionate Target","Combined Target","Yet to Achieve","Yet to Open","BOs"].includes(key)) v=fmt2(v);
-      html += `<td class="${["Accounts Opened","Accounts Closed","Net Accounts","Proportionate Target","Combined Target","Yet to Achieve","BOs","Achievement %"].includes(key)?"num":""}">${v ?? ""}</td>`;
-    });
-    html += `</tr>`;
-  });
-
-  html += `</tbody></table>
-<script>
-window.onload=function(){
-  setTimeout(function(){window.print();},250);
-};
-</script></body></html>`;
-
-  const w=window.open("","_blank","width=1200,height=800");
-  if(!w){alert("Please allow pop-ups for this dashboard.");return;}
-  w.document.open();
-  w.document.write(html);
-  w.document.close();
+  document.body.classList.remove("print-bo","print-soho","print-combined");
+  document.body.classList.add("print-"+kind);
+  window.print();
 }
 
 function render(){
@@ -406,7 +374,7 @@ function renderLookup(){
 document.getElementById("holidayBody").innerHTML=HOLIDAYS.map(h=>'<tr><td>'+h[0]+'</td><td>'+h[1]+'</td><td>'+h[2]+'</td><td>'+h[3]+'</td><td>'+h[4]+'</td></tr>').join("");
 render();
 
-window.addEventListener("afterprint",()=>document.body.classList.remove("print-bo","print-so","print-combined"));
+window.addEventListener("afterprint",()=>document.body.classList.remove("print-bo","print-soho","print-combined"));
 </script>
 </body>
 </html>
