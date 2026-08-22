@@ -81,34 +81,20 @@ tr.g td{background:#c6efce} tr.y td{background:#ffeb9c} tr.o td{background:#fce4
 </style>
 </head>
 <body>
-<header>
-<div class="header-inner">
-<div class="kicker">Department of Posts · Andhra Pradesh Circle</div>
-<h1>Gudivada Sub Division — Health Card</h1>
-<div class="subtitle">FY 2026–27 · Net Accounts Performance & Office-wise Operational Dashboard</div>
-<div class="meta">
-<span class="badge" id="dateBadge">As on Date: 22-08-2026</span>
-<span class="badge">15 Sub Post Offices</span>
-<span class="badge">72 Branch Post Offices</span>
-<span class="badge" id="rankBadge">Performance view</span>
-</div>
-</div>
-</header>
+<header><div style="text-align:center">
+<div style="font-size:24px;font-weight:800">Department of Posts</div>
+<div style="font-size:18px;font-weight:700">Government of India</div>
+<div style="font-size:14px;font-weight:600;margin-top:4px">Gudivada Sub Division</div>
+</div></header>
 
 <div class="wrap">
 <div class="controls-top no-print">
-<input id="search" placeholder="Search office / SO..." oninput="render()">
-<select id="typeFilter" onchange="render()"><option value="">All Office Types</option><option value="BO">BO</option><option value="SO">SO</option><option value="HO">HO</option></select>
-<select id="soFilter" onchange="render()"><option value="">All Sub Post Offices</option></select>
 </div>
 
 <div class="tabs no-print">
 <button class="active" onclick="tab('overview',this)">Overview</button>
 <button onclick="tab('bo',this)">BO Performance</button>
 <button onclick="tab('so',this)">SO Performance</button>
-<button onclick="tab('consolidated',this)">SO Drilldown</button>
-<button onclick="tab('lookup',this)">Office Lookup</button>
-<button onclick="tab('holidays',this)">Closed Holidays 2026</button>
 <button onclick="window.open('BO_Performance_Report.html','_blank')">BO Performance — PDF</button>
 <button onclick="window.open('SO_HO_Performance_Report.html','_blank')">SO + HO Performance — PDF</button>
 <button onclick="window.open('SO_Consolidated_Report.html','_blank')">SO-wise Consolidated — PDF</button>
@@ -149,12 +135,7 @@ tr.g td{background:#c6efce} tr.y td{background:#ffeb9c} tr.o td{background:#fce4
 
 <section id="so" class="panel"><div class="box"><h2>Sub Post Office Performance</h2><div class="table-wrap"><div id="soTable"></div></div></div></section>
 
-<section id="consolidated" class="panel"><div class="box"><h2>Sub-Division Drilldown</h2><div class="note">SO own performance + attached BO performance. Select an SO to inspect its branch offices.</div><div id="combinedTable"></div><div id="drilldown" style="margin-top:15px"></div></div></section>
-
-<section id="lookup" class="panel"><div class="box"><h2>Office Lookup</h2><div class="search-row"><input id="lookupSearch" placeholder="Search office name..." oninput="renderLookup()"><select id="lookupType" onchange="renderLookup()"><option value="">All</option><option>BO</option><option>SO</option><option>HO</option></select></div><div class="table-wrap"><div id="lookupTable"></div></div></div></section>
-
-<section id="holidays" class="panel"><div class="box"><h2>List of Closed Holidays — Andhra Pradesh — 2026</h2><div class="note">Closed holidays shown from the uploaded Annexure-I image.</div><div class="table-wrap"><table class="calendar"><thead><tr><th>Sl.No.</th><th>Holiday</th><th>Month</th><th>Date</th><th>Day</th></tr></thead><tbody id="holidayBody"></tbody></table></div></div></section>
-
+<section id="consolidated" class="panel"><div class="box"><h2>Sub-Division Drilldown</h2><div class="note">SO own performance + attached BO performance. Select an SO to inspect its branch offices.</div><div id="combinedTable"></div></div></section>
 <div class="footer">Gudivada Sub Division · FY 2026–27 · Dashboard generated from the existing Net Accounts Excel workflow</div>
 </div>
 
@@ -209,9 +190,11 @@ function table(rows, columns, withRank=true){
     out+="<tr class='"+pctClass(p)+"'>";
     if(withRank) out+="<td>"+(i+1)+"</td>";
     columns.forEach(c=>{
-      let v=r[c.key];
+      let v=(c.key==="__Yet to Open")
+        ? Math.max(Number(r["Proportionate Target"]||0)-Number(r["Net Accounts"]||0),0)
+        : r[c.key];
       if(c.key==="Achievement %") v=pct(v);
-      else if(["Accounts Opened","Accounts Closed","Net Accounts","Annual Target","Proportionate Target","Yet to Achieve","Combined Target"].includes(c.key)) v=fmt(v);
+      else if(c.key==="__Yet to Open" || ["Accounts Opened","Accounts Closed","Net Accounts","Annual Target","Proportionate Target","Yet to Achieve","Combined Target"].includes(c.key)) v=fmt(v);
       out+="<td class='"+(c.num?"num":"")+"'>"+(v??"")+"</td>";
     });
     out+="</tr>";
@@ -226,24 +209,7 @@ function compact(rows){
     "</tbody></table>";
 }
 
-function fillSOFilter(){
-  const sel=document.getElementById("soFilter");
-  const names=[...new Set(boRows().map(x=>x["Parent SO"]).filter(Boolean))].sort();
-  const old=sel.value;
-  sel.innerHTML='<option value="">All Sub Post Offices</option>'+names.map(n=>'<option>'+n.replaceAll('"','&quot;')+'</option>').join("");
-  if(names.includes(old)) sel.value=old;
-}
-
-function filteredAll(){
-  const q=(document.getElementById("search")?.value||"").toLowerCase().trim();
-  const t=document.getElementById("typeFilter")?.value||"";
-  const s=document.getElementById("soFilter")?.value||"";
-  return allRows().filter(r=>
-    (!q || String(r["Office Name"]).toLowerCase().includes(q) || String(r["Parent SO"]||"").toLowerCase().includes(q)) &&
-    (!t || r["Office Type"]===t) &&
-    (!s || r["Parent SO"]===s)
-  );
-}
+function filteredAll(){ return allRows(); }
 
 
 function printReport(kind){
@@ -292,7 +258,6 @@ function printReport(kind){
 }
 
 function render(){
-  fillSOFilter();
   const rows=allRows(), bos=boRows(), sos=soRows(), comb=combinedRows();
   const opened=rows.reduce((a,r)=>a+Number(r["Accounts Opened"]||0),0);
   const closed=rows.reduce((a,r)=>a+Number(r["Accounts Closed"]||0),0);
@@ -349,29 +314,7 @@ function render(){
     {label:"Prop. Target",key:"Proportionate Target",num:true},{label:"Net",key:"Net Accounts",num:true},{label:"Achievement",key:"Achievement %",num:true}
   ],true);
 
-  const active=document.querySelector(".panel.active")?.id;
-  if(active==="lookup") renderLookup();
-  renderDrilldown();
 }
-
-function renderDrilldown(){
-  const selected=document.getElementById("soFilter")?.value||"";
-  if(!selected){document.getElementById("drilldown").innerHTML='<div class="note">Select an SO from the filter above to expand its BO list.</div>';return;}
-  const children=boRows().filter(b=>b["Parent SO"]===selected).sort((a,b)=>b["Achievement %"]-a["Achievement %"]);
-  document.getElementById("drilldown").innerHTML='<div class="box" style="background:#f8fafc"><h3>'+selected+' — attached BOs ('+children.length+')</h3>'+compact(children)+'</div>';
-}
-
-function renderLookup(){
-  const q=(document.getElementById("lookupSearch")?.value||"").toLowerCase().trim();
-  const t=document.getElementById("lookupType")?.value||"";
-  const rows=allRows().filter(r=>(!q||String(r["Office Name"]).toLowerCase().includes(q)||String(r["Parent SO"]||"").toLowerCase().includes(q))&&(!t||r["Office Type"]===t));
-  document.getElementById("lookupTable").innerHTML=table(rows.slice().sort((a,b)=>b["Achievement %"]-a["Achievement %"]),[
-    {label:"Office",key:"Office Name"},{label:"Type",key:"Office Type"},{label:"Parent SO",key:"Parent SO"},
-    {label:"Net",key:"Net Accounts",num:true},{label:"Achievement",key:"Achievement %",num:true}
-  ]);
-}
-
-document.getElementById("holidayBody").innerHTML=HOLIDAYS.map(h=>'<tr><td>'+h[0]+'</td><td>'+h[1]+'</td><td>'+h[2]+'</td><td>'+h[3]+'</td><td>'+h[4]+'</td></tr>').join("");
 render();
 
 window.addEventListener("afterprint",()=>document.body.classList.remove("print-bo","print-soho","print-combined"));
