@@ -64,14 +64,14 @@ tr.g td{background:#c6efce} tr.y td{background:#ffeb9c} tr.o td{background:#fce4
 @media(max-width:700px){.cards{grid-template-columns:1fr 1fr}.grid{grid-template-columns:1fr}.controls-top{grid-template-columns:1fr}.mini-grid{grid-template-columns:1fr 1fr}header{padding:18px}h1{font-size:23px}.wrap{padding:12px}}
 .report-print-only{display:none}
 @media print{
-  body.print-bo #reportSOHO,
+  body.print-bo #reportSO,
   body.print-bo #reportCombined{display:none!important}
-  body.print-soho #reportBO,
-  body.print-soho #reportCombined{display:none!important}
+  body.print-so #reportBO,
+  body.print-so #reportCombined{display:none!important}
   body.print-combined #reportBO,
   body.print-combined #reportSOHO{display:none!important}
   body.print-bo #reportBO,
-  body.print-soho #reportSOHO,
+  body.print-so #reportSO,
   body.print-combined #reportCombined{display:block!important}
 }
 @media print{
@@ -110,7 +110,7 @@ tr.g td{background:#c6efce} tr.y td{background:#ffeb9c} tr.o td{background:#fce4
 <button onclick="tab('lookup',this)">Office Lookup</button>
 <button onclick="tab('holidays',this)">Closed Holidays 2026</button>
 <button onclick="printReport('bo')">BO Performance — PDF</button>
-<button onclick="printReport('soho')">SO + HO Performance — PDF</button>
+<button onclick="printReport('so')">SO Performance — PDF</button>
 <button onclick="printReport('combined')">SO-wise Consolidated — PDF</button>
 </div>
 
@@ -169,6 +169,12 @@ tr.g td{background:#c6efce} tr.y td{background:#ffeb9c} tr.o td{background:#fce4
   <h1>Gudivada Sub Division — SO + HO Performance</h1>
   <p><b>As on Date: 22-08-2026</b></p>
   <div id="reportSOHOBody"></div>
+</div>
+
+<div id="reportSO" class="report-print-only">
+  <h1>Gudivada Sub Division — SO Performance</h1>
+  <p><b>As on Date: 22-08-2026</b></p>
+  <div id="reportSOBody"></div>
 </div>
 
 <div id="reportCombined" class="report-print-only">
@@ -247,50 +253,49 @@ function filteredAll(){
 
 
 function printReport(kind){
-  // Build the selected report using the same live dashboard data.
   const bos = boRows().slice().sort((a,b)=>b["Achievement %"]-a["Achievement %"]);
   const sos = soRows().slice().sort((a,b)=>b["Achievement %"]-a["Achievement %"]);
   const comb = combinedRows().slice().sort((a,b)=>b["Achievement %"]-a["Achievement %"]);
 
-  document.getElementById("reportBOBody").innerHTML = table(bos,[
-    {label:"Office",key:"Office Name"},
-    {label:"Parent SO",key:"Parent SO"},
-    {label:"Opened",key:"Accounts Opened",num:true},
-    {label:"Closed",key:"Accounts Closed",num:true},
-    {label:"Net",key:"Net Accounts",num:true},
-    {label:"Proportionate Target",key:"Proportionate Target",num:true},
-    {label:"Achievement",key:"Achievement %",num:true}
-  ],true);
+  if(kind==="bo"){
+    document.getElementById("reportBOBody").innerHTML = table(bos,[
+      {label:"BO Name",key:"Office Name"},
+      {label:"Parent SO",key:"Parent SO"},
+      {label:"Opened",key:"Accounts Opened",num:true},
+      {label:"Closed",key:"Accounts Closed",num:true},
+      {label:"Net Accounts",key:"Net Accounts",num:true},
+      {label:"Proportionate Target",key:"Proportionate Target",num:true},
+      {label:"Achievement",key:"Achievement %",num:true}
+    ],true);
+  }
 
-  // SO + HO: include all SOs and any HO records available in the source data.
-  const ho = allRows().filter(r=>r["Office Type"]==="HO")
-    .sort((a,b)=>b["Achievement %"]-a["Achievement %"]);
-  const soho = sos.concat(ho);
-  document.getElementById("reportSOHOBody").innerHTML = table(soho,[
-    {label:"Office",key:"Office Name"},
-    {label:"Type",key:"Office Type"},
-    {label:"Opened",key:"Accounts Opened",num:true},
-    {label:"Closed",key:"Accounts Closed",num:true},
-    {label:"Net",key:"Net Accounts",num:true},
-    {label:"Proportionate Target",key:"Proportionate Target",num:true},
-    {label:"Achievement",key:"Achievement %",num:true}
-  ],true);
+  if(kind==="so"){
+    document.getElementById("reportSOBody").innerHTML = table(sos,[
+      {label:"SO Name",key:"Office Name"},
+      {label:"Opened",key:"Accounts Opened",num:true},
+      {label:"Closed",key:"Accounts Closed",num:true},
+      {label:"Net Accounts",key:"Net Accounts",num:true},
+      {label:"Proportionate Target",key:"Proportionate Target",num:true},
+      {label:"Achievement",key:"Achievement %",num:true}
+    ],true);
+  }
 
-  document.getElementById("reportCombinedBody").innerHTML = table(comb,[
-    {label:"SO",key:"SO Name"},
-    {label:"BOs",key:"BOs",num:true},
-    {label:"Combined Target",key:"Combined Target",num:true},
-    {label:"Proportionate Target",key:"Proportionate Target",num:true},
-    {label:"Net Accounts",key:"Net Accounts",num:true},
-    {label:"Achievement",key:"Achievement %",num:true},
-    {label:"Yet to Achieve",key:"Yet to Achieve",num:true}
-  ],true);
+  if(kind==="combined"){
+    document.getElementById("reportCombinedBody").innerHTML = table(comb,[
+      {label:"SO Name",key:"SO Name"},
+      {label:"BOs",key:"BOs",num:true},
+      {label:"Combined Target",key:"Combined Target",num:true},
+      {label:"Proportionate Target",key:"Proportionate Target",num:true},
+      {label:"Net Accounts",key:"Net Accounts",num:true},
+      {label:"Achievement",key:"Achievement %",num:true},
+      {label:"Yet to Achieve",key:"Yet to Achieve",num:true}
+    ],true);
+  }
 
-  document.body.classList.remove("print-bo","print-soho","print-combined");
+  document.body.classList.remove("print-bo","print-so","print-combined");
   document.body.classList.add("print-"+kind);
   window.print();
 }
-
 function render(){
   fillSOFilter();
   const rows=allRows(), bos=boRows(), sos=soRows(), comb=combinedRows();
@@ -374,7 +379,7 @@ function renderLookup(){
 document.getElementById("holidayBody").innerHTML=HOLIDAYS.map(h=>'<tr><td>'+h[0]+'</td><td>'+h[1]+'</td><td>'+h[2]+'</td><td>'+h[3]+'</td><td>'+h[4]+'</td></tr>').join("");
 render();
 
-window.addEventListener("afterprint",()=>document.body.classList.remove("print-bo","print-soho","print-combined"));
+window.addEventListener("afterprint",()=>document.body.classList.remove("print-bo","print-so","print-combined"));
 </script>
 </body>
 </html>
