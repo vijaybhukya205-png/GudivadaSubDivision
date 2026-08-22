@@ -6,6 +6,17 @@ XLSX=BASE/"Gudivada_Net_Accounts_Latest.xlsx"
 INDEX=BASE/"index.html"
 wb=openpyxl.load_workbook(XLSX,data_only=True)
 
+# Authoritative overall totals from the Summary sheet.
+summary={}
+for row in wb["Summary"].iter_rows(min_row=2, values_only=True):
+    if row[0] is not None:
+        summary[str(row[0])]=row[1]
+summary_opened=int(summary.get("Accounts Opened") or 0)
+summary_closed=int(summary.get("Accounts Closed") or 0)
+summary_net=int(summary.get("Net Accounts") or 0)
+if summary_opened-summary_closed != summary_net:
+    raise RuntimeError(f"Summary mismatch: {summary_opened}-{summary_closed}!={summary_net}")
+
 def read_rows(sheet):
     ws=wb[sheet]
     h=[c.value for c in ws[1]]
@@ -37,7 +48,8 @@ for s in so:
                      "Proportionate Target":prop,"Net Accounts":net,
                      "Achievement %":(net/prop*100 if prop else 0),"Yet to Achieve":max(prop-net,0)})
 
-data={"bo":bo,"so_own":so,"so_comb":combined,"all":allr}
+data={"bo":bo,"so_own":so,"so_comb":combined,"all":allr,
+      "summary":{"Accounts Opened":int(summary_opened),"Accounts Closed":int(summary_closed),"Net Accounts":int(summary_net)}}
 blob=json.dumps(data,ensure_ascii=False,separators=(",",":"))
 index_text=index_text[:m.start()]+"const D="+blob+";"+index_text[m.end():]
 
@@ -67,16 +79,30 @@ def make_report(title,rows,cols):
             elif isinstance(v,(int,float)): v=f"{v:,.0f}"
             cells.append(f"<td>{html.escape(str(v))}</td>")
         body.append(f'<tr class="{cls}">{"".join(cells)}</tr>')
-    css="""@page{size:A4 landscape;margin:8mm}*{box-sizing:border-box}body{font-family:Arial,sans-serif;margin:0;color:#17202a}
-h1{font-size:20px;color:#173f5f;margin:0 0 5px}.meta{font-size:11px;margin-bottom:12px}
-table{width:100%;border-collapse:collapse;font-size:8.5px}th{background:#173f5f;color:#fff;padding:5px;border:1px solid #173f5f;text-align:left}
-td{padding:4px 5px;border:1px solid #d8dde3}tr.g td{background:#c6efce}tr.y td{background:#ffeb9c}tr.o td{background:#fce4d6}tr.r td{background:#ffc7ce}
-.actions{margin-bottom:10px}button{padding:7px 14px;margin-right:6px}@media print{.actions{display:none}body{-webkit-print-color-adjust:exact;print-color-adjust:exact}}"""
+    # Portrait A4 report styling: larger readable font, automatic column sizing,
+    # and wrapping for long office/SO names.
+    widths={
+        "__rank__":"5%", "Office Name":"25%", "Parent SO":"20%",
+        "Accounts Opened":"9%", "Accounts Closed":"9%", "Net Accounts":"9%",
+        "Proportionate Target":"11%", "Achievement %":"8%",
+        "__yet_open__":"9%", "Office Type":"10%", "SO Name":"25%",
+        "BOs":"7%", "Combined Target":"11%", "Yet to Achieve":"11%"
+    }
+    colgroup="<colgroup>"+"".join(f'<col style="width:{widths.get(k, "auto")}">' for _,k in cols)+"</colgroup>"
+    css="""@page{size:A4 portrait;margin:10mm 8mm}*{box-sizing:border-box}
+body{font-family:Arial,sans-serif;margin:0;color:#17202a;background:#fff}
+h1{font-size:20px;color:#173f5f;margin:0 0 6px;line-height:1.15}.meta{font-size:11px;margin-bottom:10px}
+table{width:100%;border-collapse:collapse;table-layout:auto;font-size:10px}
+th{background:#173f5f;color:#fff;padding:6px 5px;border:1px solid #173f5f;text-align:center;vertical-align:middle;white-space:normal;overflow-wrap:anywhere}
+td{padding:5px 5px;border:1px solid #d8dde3;vertical-align:middle;white-space:normal;overflow-wrap:anywhere;word-break:normal}
+td:first-child{text-align:center;white-space:nowrap}tr.g td{background:#c6efce}tr.y td{background:#ffeb9c}tr.o td{background:#fce4d6}tr.r td{background:#ffc7ce}
+.actions{margin-bottom:10px}button{padding:7px 14px;margin-right:6px;font-size:13px}
+@media print{.actions{display:none}body{-webkit-print-color-adjust:exact;print-color-adjust:exact}tr{page-break-inside:avoid}thead{display:table-header-group}}"""
     date=report_date or "22-08-2026"
     return f"""<!doctype html><html><head><meta charset="utf-8"><title>{html.escape(title)}</title><style>{css}</style></head>
 <body><div class="actions"><button onclick="window.print()">Print / Save PDF</button><button onclick="window.close()">Close</button></div>
 <h1>{html.escape(title)}</h1><div class="meta"><b>As on Date: {date}</b> | Gudivada Sub Division</div>
-<table><thead><tr>{th}</tr></thead><tbody>{''.join(body)}</tbody></table></body></html>"""
+<table>{colgroup}<thead><tr>{th}</tr></thead><tbody>{''.join(body)}</tbody></table></body></html>"""
 
 (BASE/"BO_Performance_Report.html").write_text(make_report("Gudivada Sub Division — BO Performance",bo,
 [("Rank","__rank__"),("BO Name","Office Name"),("Parent SO","Parent SO"),("Opened","Accounts Opened"),("Closed","Accounts Closed"),("Net","Net Accounts"),("Proportionate Target","Proportionate Target"),("Achievement","Achievement %"),("Yet to Open","__yet_open__")]),encoding="utf-8")
