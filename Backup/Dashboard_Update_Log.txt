@@ -1,0 +1,15 @@
+============================================================ 
+GUDIVADA SUB DIVISION - DASHBOARD UPDATE 
+Started: 22/08/2026 17:03:04.86 
+============================================================ 
+[1/4] Checking input files... 
+Opened.xlsx found. 
+Closed.xlsx found. 
+[2/4] Running Net Accounts updater... 
+SUCCESS: Net Accounts Excel updated. 
+[3/4] Checking dashboard... 
+index.html found. 
+[4/4] Deploying to Vercel production... 
+'vercel' is not recognized as an internal or external command,
+operable program or batch file.
+ERROR: Vercel deployment failed. Error code: 9009 

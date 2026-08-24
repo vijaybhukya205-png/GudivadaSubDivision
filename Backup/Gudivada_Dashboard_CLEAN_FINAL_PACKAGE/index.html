@@ -1,0 +1,323 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Gudivada Sub Division — Health Card</title>
+<style>
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@600;700;800&display=swap");
+:root{
+  --navy:#173f5f;--blue:#1f4e78;--ink:#17202a;--muted:#667085;--bg:#f3f6fa;
+  --green:#198754;--amber:#d97706;--red:#c62828;--line:#e5e9ee;--card:#fff;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,Arial,sans-serif}
+header{background:linear-gradient(135deg,#173f5f,#0f5f78);color:#fff;padding:24px 30px;position:sticky;top:0;z-index:20;box-shadow:0 3px 16px #0002}
+.header-inner{max-width:1600px;margin:auto}
+.kicker{font-size:12px;letter-spacing:1.2px;text-transform:uppercase;opacity:.82}
+h1{font:800 28px Poppins;margin:3px 0}
+.subtitle{font-size:14px;opacity:.92}
+.meta{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+.badge{background:#ffffff18;border:1px solid #ffffff30;border-radius:999px;padding:7px 11px;font-size:12px}
+.wrap{max-width:1600px;margin:auto;padding:18px 20px 40px}
+.controls-top{display:grid;grid-template-columns:1fr 190px 190px;gap:10px;margin-bottom:14px}
+select,input{padding:10px 12px;border:1px solid #ccd5df;border-radius:9px;background:#fff;font:inherit}
+.tabs{display:flex;gap:7px;flex-wrap:wrap;margin:14px 0}
+button{border:0;border-radius:9px;padding:10px 13px;background:#dbe5ef;color:#173f5f;font-weight:800;cursor:pointer}
+button:hover{filter:brightness(.97)}
+button.active{background:var(--navy);color:#fff}
+.cards{display:grid;grid-template-columns:repeat(6,1fr);gap:12px;margin-bottom:15px}
+.card{background:var(--card);border-radius:13px;padding:15px;box-shadow:0 2px 12px #00000010;border:1px solid #eef1f5}
+.card .label{font-size:12px;color:var(--muted);font-weight:600}
+.card .value{display:block;font:800 25px Poppins;margin-top:4px}
+.card .small{font-size:11px;color:var(--muted);margin-top:3px}
+.hero{background:#fff;border-radius:14px;padding:18px;box-shadow:0 2px 12px #0001;margin-bottom:15px;border:1px solid #eef1f5}
+.hero-grid{display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:14px}
+.hero-score{font:800 42px Poppins;color:var(--navy)}
+.progress{height:10px;background:#e8edf2;border-radius:999px;overflow:hidden;margin:9px 0}
+.progress>span{display:block;height:100%;border-radius:999px}
+.green{background:#2e8b57} .amber{background:#e5a23c} .red{background:#d9534f}
+.panel{display:none} .panel.active{display:block}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:15px}
+.box{background:#fff;border-radius:14px;padding:16px;box-shadow:0 2px 12px #0001;margin-bottom:15px;border:1px solid #eef1f5}
+.box h2{font:700 18px Poppins;margin:0 0 11px;color:#173f5f}
+.box h3{font-size:14px;margin:12px 0 8px}
+.note{font-size:12px;color:var(--muted)}
+.statline{display:flex;justify-content:space-between;gap:10px;padding:8px 0;border-bottom:1px solid #eef1f5;font-size:13px}
+table{width:100%;border-collapse:collapse;font-size:12px}
+th{background:var(--blue);color:#fff;padding:9px 8px;text-align:left;position:sticky;top:0;z-index:2}
+td{padding:8px;border-bottom:1px solid var(--line);vertical-align:middle}
+.num{text-align:right}
+tr.g td{background:#c6efce} tr.y td{background:#ffeb9c} tr.o td{background:#fce4d6} tr.r td{background:#ffc7ce}
+.table-wrap{max-height:650px;overflow:auto;border:1px solid #e7ebef;border-radius:9px}
+.rankbar{height:9px;background:#e8edf2;border-radius:99px;overflow:hidden;min-width:100px}
+.rankbar span{display:block;height:100%;border-radius:99px}
+.mini-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.mini{background:#f7f9fb;border-radius:10px;padding:11px;border:1px solid #e9edf2}
+.mini b{display:block;font-size:20px;margin-top:3px}
+.search-row{display:grid;grid-template-columns:1fr 160px;gap:8px;margin-bottom:10px}
+.insight{padding:11px;border-radius:10px;background:#f7f9fb;border-left:4px solid var(--blue);margin:7px 0;font-size:13px}
+.calendar td,.calendar th{font-size:12px}
+.calendar tr:nth-child(even) td{background:#fafbfc}
+.footer{text-align:center;color:#7b8794;font-size:11px;padding:18px}
+@media(max-width:1100px){.cards{grid-template-columns:repeat(3,1fr)}.hero-grid{grid-template-columns:1fr}.controls-top{grid-template-columns:1fr 1fr}}
+@media(max-width:700px){.cards{grid-template-columns:1fr 1fr}.grid{grid-template-columns:1fr}.controls-top{grid-template-columns:1fr}.mini-grid{grid-template-columns:1fr 1fr}header{padding:18px}h1{font-size:23px}.wrap{padding:12px}}
+.report-print-only{display:none}
+@media print{
+  body.print-bo #reportSOHO,
+  body.print-bo #reportCombined{display:none!important}
+  body.print-soho #reportBO,
+  body.print-soho #reportCombined{display:none!important}
+  body.print-combined #reportBO,
+  body.print-combined #reportSOHO{display:none!important}
+  body.print-bo #reportBO,
+  body.print-soho #reportSOHO,
+  body.print-combined #reportCombined{display:block!important}
+}
+@media print{
+ body{background:#fff} header,.controls-top,.tabs,.footer,.no-print{display:none!important}
+ .panel{display:block!important} .box,.hero,.card{box-shadow:none;border:1px solid #ccc}
+}
+</style>
+</head>
+<body>
+<header><div style="text-align:center">
+<div style="font-size:24px;font-weight:800">Department of Posts</div>
+<div style="font-size:18px;font-weight:700">Government of India</div>
+<div style="font-size:14px;font-weight:600;margin-top:4px">Gudivada Sub Division</div>
+</div></header>
+
+<div class="wrap">
+<div class="controls-top no-print">
+</div>
+
+<div class="tabs no-print">
+<button class="active" onclick="tab('overview',this)">Overview</button>
+<button onclick="tab('bo',this)">BO Performance</button>
+<button onclick="tab('so',this)">SO Performance</button>
+<button onclick="window.open('BO_Performance_Report.html','_blank')">BO Performance — PDF</button>
+<button onclick="window.open('SO_HO_Performance_Report.html','_blank')">SO + HO Performance — PDF</button>
+<button onclick="window.open('SO_Consolidated_Report.html','_blank')">SO-wise Consolidated — PDF</button>
+</div>
+
+<section id="overview" class="panel active">
+<div class="cards">
+<div class="card"><div class="label">Total Offices</div><span class="value" id="totalOffices">0</span><div class="small">BO + SO + HO</div></div>
+<div class="card"><div class="label">Branch Offices</div><span class="value" id="boCount">0</span><div class="small">Annual target: 300 each</div></div>
+<div class="card"><div class="label">Sub Offices</div><span class="value" id="soCount">0</span><div class="small">Annual target: 600 each</div></div>
+<div class="card"><div class="label">Accounts Opened</div><span class="value" id="opened">0</span><div class="small">Cumulative</div></div>
+<div class="card"><div class="label">Accounts Closed</div><span class="value" id="closed">0</span><div class="small">Cumulative</div></div>
+<div class="card"><div class="label">Net Accounts</div><span class="value" id="net">0</span><div class="small">Opened − Closed</div></div>
+</div>
+
+<div class="hero">
+<div class="hero-grid">
+<div><div class="note">Sub Division headline position</div><div class="hero-score" id="overallPct">0%</div><div class="note">Net accounts vs proportionate target</div><div class="progress"><span id="overallBar"></span></div></div>
+<div><div class="note">BOs ≥ 100% pro-rata</div><div class="hero-score" id="strongBO">0</div><div class="note">Target achievement</div></div>
+<div><div class="note">BOs below 60%</div><div class="hero-score" id="riskBO">0</div><div class="note">Priority attention</div></div>
+</div>
+</div>
+
+<div class="grid">
+<div class="box"><h2>Performance Distribution</h2><div class="mini-grid" id="distribution"></div></div>
+<div class="box"><h2>Top of Mind</h2><div id="insights"></div></div>
+</div>
+
+<div class="grid">
+<div class="box"><h2>Top 5 Branch Offices</h2><div id="topBO"></div></div>
+<div class="box"><h2>Bottom 5 Branch Offices</h2><div id="bottomBO"></div></div>
+<div class="box"><h2>Top 3 Sub Post Offices</h2><div id="topSO"></div></div>
+<div class="box"><h2>SO-wise Consolidated Ranking</h2><div id="topCombined"></div></div>
+</div>
+</section>
+
+<section id="bo" class="panel"><div class="box"><h2>Branch Office Performance</h2><div class="note">Green ≥100% · Yellow 80–99% · Orange 60–79% · Red &lt;60%</div><div class="table-wrap"><div id="boTable"></div></div></div></section>
+
+<section id="so" class="panel"><div class="box"><h2>Sub Post Office Performance</h2><div class="table-wrap"><div id="soTable"></div></div></div></section>
+
+<section id="consolidated" class="panel"><div class="box"><h2>Sub-Division Drilldown</h2><div class="note">SO own performance + attached BO performance. Select an SO to inspect its branch offices.</div><div id="combinedTable"></div></div></section>
+<div class="footer">Gudivada Sub Division · FY 2026–27 · Dashboard generated from the existing Net Accounts Excel workflow</div>
+</div>
+
+
+<div id="reportBO" class="report-print-only">
+  <h1>Gudivada Sub Division — BO Performance</h1>
+  <p><b>As on Date: 22-08-2026</b></p>
+  <div id="reportBOBody"></div>
+</div>
+
+<div id="reportSOHO" class="report-print-only">
+  <h1>Gudivada Sub Division — SO + HO Performance</h1>
+  <p><b>As on Date: 22-08-2026</b></p>
+  <div id="reportSOHOBody"></div>
+</div>
+
+<div id="reportCombined" class="report-print-only">
+  <h1>Gudivada Sub Division — SO-wise Consolidated Performance</h1>
+  <p><b>As on Date: 22-08-2026</b></p>
+  <div id="reportCombinedBody"></div>
+</div>
+
+<script>
+const D={"bo":[{"Office Name":"Appikatla B.O","Accounts Opened":235,"Accounts Closed":50,"Net Accounts":185,"Office Type":"BO","Annual Target":300,"Proportionate Target":125,"Achievement %":148,"Yet to Achieve":0,"Parent SO":"Mudunuru S.O"},{"Office Name":"Koyyagurapadu B.O","Accounts Opened":181,"Accounts Closed":24,"Net Accounts":157,"Office Type":"BO","Annual Target":300,"Proportionate Target":125,"Achievement %":125.6,"Yet to Achieve":0,"Parent SO":"Vunguturu S.O (Krishna)"},{"Office Name":"Vennanapudi B.O","Accounts Opened":257,"Accounts Closed":112,"Net Accounts":145,"Office Type":"BO","Annual Target":300,"Proportionate Target":125,"Achievement %":116,"Yet to Achieve":0,"Parent SO":"Janardhanapuram S.O"},{"Office Name":"Dosapadu B.O","Accounts Opened":167,"Accounts Closed":27,"Net Accounts":140,"Office Type":"BO","Annual Target":300,"Proportionate Target":125,"Achievement %":112,"Yet to Achieve":0,"Parent SO":"Janardhanapuram S.O"},{"Office Name":"Komatigunta Lock B.O","Accounts Opened":188,"Accounts Closed":64,"Net Accounts":124,"Office Type":"BO","Annual Target":300,"Proportionate Target":125,"Achievement %":99.2,"Yet to Achieve":1,"Parent SO":"Manikonda S.O"},{"Office Name":"Bollapadu B.O","Accounts Opened":147,"Accounts Closed":25,"Net Accounts":122,"Office Type":"BO","Annual Target":300,"Proportionate Target":125,"Achievement %":97.6,"Yet to Achieve":3,"Parent SO":"Mudunuru S.O"},{"Office Name":"Nandamuru B.O","Accounts Opened":198,"Accounts Closed":80,"Net Accounts":118,"Office Type":"BO","Annual Target":300,"Proportionate Target":125,"Achievement %":94.39999999999999,"Yet to Achieve":7,"Parent SO":"Indupalli S.O"},{"Office Name":"Vinnakota B.O","Accounts Opened":135,"Accounts Closed":20,"Net Accounts":115,"Office Type":"BO","Annual Target":300,"Proportionate Target":125,"Achievement %":92,"Yet to Achieve":10,"Parent SO":"Mudinepalli S.O"},{"Office Name":"Pedapalaparru B.O","Accounts Opened":130,"Accounts Closed":18,"Net Accounts":112,"Office Type":"BO","Annual Target":300,"Proportionate Target":125,"Achievement %":89.60000000000001,"Yet to Achieve":13,"Parent SO":"Moturu S.O"},{"Office Name":"Vemanda B.O","Accounts Opened":154,"Accounts Closed":43,"Net Accounts":111,"Office Type":"BO","Annual Target":300,"Proportionate Target":125,"Achievement %":88.8,"Yet to Achieve":14,"Parent SO":"Indupalli S.O"},{"Office Name":"Bokinala B.O","Accounts Opened":172,"Accounts Closed":64,"Net Accounts":108,"Office Type":"BO","Annual Target":300,"Proportionate Target":125,"Achievement %":86.4,"Yet to Achieve":17,"Parent SO":"Manikonda S.O"},{"Office Name":"Gunnanapudi B.O","Accounts Opened":126,"Accounts Closed":23,"Net Accounts":103,"Office Type":"BO","Annual Target":300,"Proportionate Target":125,"Achievement %":82.39999999999999,"Yet to Achieve":22,"Parent SO":"Rudrapaka S.O"},{"Office Name":"Moparru B.O","Accounts Opened":121,"Accounts Closed":19,"Net Accounts":102,"Office Type":"BO","Annual Target":300,"Proportionate Target":125,"Achievement %":81.6,"Yet to Achieve":23,"Parent SO":"Janardhanapuram S.O"},{"Office Name":"Garapadu B.O","Accounts Opened":111,"Accounts Closed":10,"Net Accounts":101,"Office Type":"BO","Annual Target":300,"Proportionate Target":125,"Achievement %":80.80000000000001,"Yet to Achieve":24,"Parent SO":"Vunguturu S.O (Krishna)"},{"Office Name":"Tativarru B.O","Accounts Opened":118,"Accounts Closed":17,"Net Accounts":101,"Office Type":"BO","Annual Target":300,"Proportionate Target":125,"Achievement %":80.80000000000001,"Yet to Achieve":24,"Parent SO":"Golvepalli (Zami) S.O"},{"Office Name":"Putlacheruvu B.O","Accounts Opened":137,"Accounts Closed":37,"Net Accounts":100,"Office Type":"BO","Annual Target":300,"Proportionate Target":125,"Achievement %":80,"Yet to Achieve":25,"Parent SO":"Rudrapaka S.O"},{"Office Name":"Valivarthipadu B.O","Accounts Opened":137,"Accounts Closed":39,"Net Accounts":98,"Office Type":"BO","Annual Target":300,"Proportionate Target":125,"Achievement %":78.4,"Yet to Achieve":27,"Parent SO":"Tamirisa S.O"},{"Office Name":"Bhushanagulla B.O","Accounts Opened":106,"Accounts Closed":9,"Net Accounts":97,"Office Type":"BO","Annual Target":300,"Proportionate Target":125,"Achievement %":77.60000000000001,"Yet to Achieve":28,"Parent SO":"Ventrapragada S.O"},{"Office Name":"Velinuthala B.O","Accounts Opened":147,"Accounts Closed":53,"Net Accounts":94,"Office Type":"BO","Annual Target":300,"Proportionate Target":125,"Achievement %":75.2,"Yet to Achieve":31,"Parent SO":"Vunguturu S.O (Krishna)"},{"Office Name":"Bommuluru B.O","Accounts Opened":143,"Accounts Closed":50,"Net Accounts":93,"Office Type":"BO","Annual Target":300,"Proportionate Target":125,"Achievement %":74.4,"Yet to Achieve":32,"Parent SO":"Angaluru S.O"},{"Office Name":"Kanukollu B.O","Accounts Opened":140,"Accounts Closed":48,"Net Accounts":92,"Office Type":"BO","Annual Target":300,"Proportionate Target":125,"Achievement %":73.6,"Yet to Achieve":33,"Parent SO":"Mudinepalli S.O"},{"Office Name":"Guruvindagunta B.O","Accounts Opened":101,"Accounts Closed":11,"Net Accounts":90,"Office Type":"BO","Annual Target":300,"Proportionate Target":125,"Achievement %":72,"Yet to Achieve":35,"Parent SO":"Ventrapragada S.O"},{"Office Name":"Ingilipakalanka B.O","Accounts Opened":111,"Accounts Closed":23,"Net Accounts":88,"Office Type":"BO","Annual Target":300,"Proportionate Target":125,"Achievement %":70.39999999999999,"Yet to Achieve":37,"Parent SO":"Rudrapaka S.O"},{"Office Name":"Chowtapalli B.O","Accounts Opened":131,"Accounts Closed":49,"Net Accounts":82,"Office Type":"BO","Annual Target":300,"Proportionate Target":125,"Achievement %":65.60000000000001,"Yet to Achieve":43,"Parent SO":"Moturu S.O"},{"Office Name":"Nandigamalanka B.O","Accounts Opened":79,"Accounts Closed":6,"Net Accounts":73,"Office Type":"BO","Annual Target":300,"Proportionate Target":125,"Achievement %":58.4,"Yet to Achieve":52,"Parent SO":"Rudrapaka S.O"},{"Office Name":"Vadali B.O","Accounts Opened":106,"Accounts Closed":34,"Net Accounts":72,"Office Type":"BO","Annual Target":300,"Proportionate Target":125,"Achievement %":57.59999999999999,"Yet to Achieve":53,"Parent SO":"Mudinepalli S.O"},{"Office Name":"Ponukumadu B.O","Accounts Opened":86,"Accounts Closed":15,"Net Accounts":71,"Office Type":"BO","Annual Target":300,"Proportionate Target":125,"Achievement %":56.8,"Yet to Achieve":54,"Parent SO":"Vunguturu S.O (Krishna)"},{"Office Name":"Gandhi Asramam B.O","Accounts Opened":77,"Accounts Closed":7,"Net Accounts":70,"Office Type":"BO","Annual Target":300,"Proportionate Target":125,"Achievement %":56.00000000000001,"Yet to Achieve":55,"Parent SO":"Golvepalli (Zami) S.O"},{"Office Name":"Nandivada B.O","Accounts Opened":84,"Accounts Closed":15,"Net Accounts":69,"Office Type":"BO","Annual Target":300,"Proportionate Target":125,"Achievement %":55.2,"Yet to Achieve":56,"Parent SO":"Janardhanapuram S.O"},{"Office Name":"Guntakoduru B.O","Accounts Opened":83,"Accounts Closed":17,"Net Accounts":66,"Office Type":"BO","Annual Target":300,"Proportionate Target":125,"Achievement %":52.8,"Yet to Achieve":59,"Parent SO":"Moturu S.O"},{"Office Name":"Pedavirivada B.O","Accounts Opened":72,"Accounts Closed":6,"Net Accounts":66,"Office Type":"BO","Annual Target":300,"Proportionate Target":125,"Achievement %":52.8,"Yet to Achieve":59,"Parent SO":"Janardhanapuram S.O"},{"Office Name":"Tenneru B.O","Accounts Opened":224,"Accounts Closed":158,"Net Accounts":66,"Office Type":"BO","Annual Target":300,"Proportionate Target":125,"Achievement %":52.8,"Yet to Achieve":59,"Parent SO":"Manikonda S.O"},{"Office Name":"Pedakamanapudi B.O","Accounts Opened":94,"Accounts Closed":30,"Net Accounts":64,"Office Type":"BO","Annual Target":300,"Proportionate Target":125,"Achievement %":51.2,"Yet to Achieve":61,"Parent SO":"Mudinepalli S.O"},{"Office Name":"Lakshminarasimhapuram B.O","Accounts Opened":71,"Accounts Closed":9,"Net Accounts":62,"Office Type":"BO","Annual Target":300,"Proportionate Target":125,"Achievement %":49.6,"Yet to Achieve":63,"Parent SO":"Janardhanapuram S.O"},{"Office Name":"Unikili B.O","Accounts Opened":66,"Accounts Closed":7,"Net Accounts":59,"Office Type":"BO","Annual Target":300,"Proportionate Target":125,"Achievement %":47.2,"Yet to Achieve":66,"Parent SO":"Rudrapaka S.O"},{"Office Name":"Lingavaram B.O","Accounts Opened":78,"Accounts Closed":19,"Net Accounts":59,"Office Type":"BO","Annual Target":300,"Proportionate Target":125,"Achievement %":47.2,"Yet to Achieve":66,"Parent SO":"Tamirisa S.O"},{"Office Name":"Siddantham B.O","Accounts Opened":132,"Accounts Closed":77,"Net Accounts":55,"Office Type":"BO","Annual Target":300,"Proportionate Target":125,"Achievement %":44,"Yet to Achieve":70,"Parent SO":"Angaluru S.O"},{"Office Name":"Pedaparupudi B.O","Accounts Opened":73,"Accounts Closed":20,"Net Accounts":53,"Office Type":"BO","Annual Target":300,"Proportionate Target":125,"Achievement %":42.4,"Yet to Achieve":72,"Parent SO":"Ventrapragada S.O"},{"Office Name":"Veldipadu B.O","Accounts Opened":89,"Accounts Closed":36,"Net Accounts":53,"Office Type":"BO","Annual Target":300,"Proportionate Target":125,"Achievement %":42.4,"Yet to Achieve":72,"Parent SO":"Vunguturu S.O (Krishna)"},{"Office Name":"Komaravolu B.O","Accounts Opened":138,"Accounts Closed":85,"Net Accounts":53,"Office Type":"BO","Annual Target":300,"Proportionate Target":125,"Achievement %":42.4,"Yet to Achieve":72,"Parent SO":"Golvepalli (Zami) S.O"},{"Office Name":"Ponukumada B.O","Accounts Opened":79,"Accounts Closed":27,"Net Accounts":52,"Office Type":"BO","Annual Target":300,"Proportionate Target":125,"Achievement %":41.6,"Yet to Achieve":73,"Parent SO":"Tamirisa S.O"},{"Office Name":"Chinaparupudi B.O","Accounts Opened":111,"Accounts Closed":60,"Net Accounts":51,"Office Type":"BO","Annual Target":300,"Proportionate Target":125,"Achievement %":40.8,"Yet to Achieve":74,"Parent SO":"Elamarru S.O"},{"Office Name":"Lankapalli Agraharam B.O","Accounts Opened":60,"Accounts Closed":11,"Net Accounts":49,"Office Type":"BO","Annual Target":300,"Proportionate Target":125,"Achievement %":39.2,"Yet to Achieve":76,"Parent SO":"Indupalli S.O"},{"Office Name":"Nuzella B.O","Accounts Opened":105,"Accounts Closed":58,"Net Accounts":47,"Office Type":"BO","Annual Target":300,"Proportionate Target":125,"Achievement %":37.6,"Yet to Achieve":78,"Parent SO":"Angaluru S.O"},{"Office Name":"Dondapadu B.O","Accounts Opened":81,"Accounts Closed":34,"Net Accounts":47,"Office Type":"BO","Annual Target":300,"Proportionate Target":125,"Achievement %":37.6,"Yet to Achieve":78,"Parent SO":"Moturu S.O"},{"Office Name":"Addada B.O","Accounts Opened":78,"Accounts Closed":33,"Net Accounts":45,"Office Type":"BO","Annual Target":300,"Proportionate Target":125,"Achievement %":36,"Yet to Achieve":80,"Parent SO":"Pedamaddali S.O"},{"Office Name":"Vanapumala B.O","Accounts Opened":58,"Accounts Closed":14,"Net Accounts":44,"Office Type":"BO","Annual Target":300,"Proportionate Target":125,"Achievement %":35.2,"Yet to Achieve":81,"Parent SO":"Ventrapragada S.O"},{"Office Name":"Ramapuram B.O","Accounts Opened":61,"Accounts Closed":17,"Net Accounts":44,"Office Type":"BO","Annual Target":300,"Proportionate Target":125,"Achievement %":35.2,"Yet to Achieve":81,"Parent SO":"Janardhanapuram S.O"},{"Office Name":"Tummalapalli B.O","Accounts Opened":88,"Accounts Closed":44,"Net Accounts":44,"Office Type":"BO","Annual Target":300,"Proportionate Target":125,"Achievement %":35.2,"Yet to Achieve":81,"Parent SO":"Janardhanapuram S.O"},{"Office Name":"Guraza B.O","Accounts Opened":63,"Accounts Closed":21,"Net Accounts":42,"Office Type":"BO","Annual Target":300,"Proportionate Target":125,"Achievement %":33.6,"Yet to Achieve":83,"Parent SO":"Mudinepalli S.O"},{"Office Name":"Komarru B.O","Accounts Opened":79,"Accounts Closed":37,"Net Accounts":42,"Office Type":"BO","Annual Target":300,"Proportionate Target":125,"Achievement %":33.6,"Yet to Achieve":83,"Parent SO":"Mudinepalli S.O"},{"Office Name":"Polukonda B.O","Accounts Opened":75,"Accounts Closed":34,"Net Accounts":41,"Office Type":"BO","Annual Target":300,"Proportionate Target":125,"Achievement %":32.8,"Yet to Achieve":84,"Parent SO":"Tamirisa S.O"},{"Office Name":"Serikalavapudi B.O","Accounts Opened":55,"Accounts Closed":17,"Net Accounts":38,"Office Type":"BO","Annual Target":300,"Proportionate Target":125,"Achievement %":30.4,"Yet to Achieve":87,"Parent SO":"Angaluru S.O"},{"Office Name":"Chinapalaparru B.O","Accounts Opened":64,"Accounts Closed":29,"Net Accounts":35,"Office Type":"BO","Annual Target":300,"Proportionate Target":125,"Achievement %":28,"Yet to Achieve":90,"Parent SO":"Mudinepalli S.O"},{"Office Name":"Edulamaddali B.O","Accounts Opened":104,"Accounts Closed":70,"Net Accounts":34,"Office Type":"BO","Annual Target":300,"Proportionate Target":125,"Achievement %":27.2,"Yet to Achieve":91,"Parent SO":"Elamarru S.O"},{"Office Name":"Lingala B.O","Accounts Opened":79,"Accounts Closed":47,"Net Accounts":32,"Office Type":"BO","Annual Target":300,"Proportionate Target":125,"Achievement %":25.6,"Yet to Achieve":93,"Parent SO":"Mudinepalli S.O"},{"Office Name":"Chinayerukapadu B.O","Accounts Opened":62,"Accounts Closed":31,"Net Accounts":31,"Office Type":"BO","Annual Target":300,"Proportionate Target":125,"Achievement %":24.8,"Yet to Achieve":94,"Parent SO":"Golvepalli (Zami) S.O"},{"Office Name":"Amudalapalli B.O","Accounts Opened":43,"Accounts Closed":13,"Net Accounts":30,"Office Type":"BO","Annual Target":300,"Proportionate Target":125,"Achievement %":24,"Yet to Achieve":95,"Parent SO":"Vunguturu S.O (Krishna)"},{"Office Name":"Sankarshanapuram B.O","Accounts Opened":29,"Accounts Closed":4,"Net Accounts":25,"Office Type":"BO","Annual Target":300,"Proportionate Target":125,"Achievement %":20,"Yet to Achieve":100,"Parent SO":"Mudinepalli S.O"},{"Office Name":"K.P.Agraharam B.O","Accounts Opened":145,"Accounts Closed":123,"Net Accounts":22,"Office Type":"BO","Annual Target":300,"Proportionate Target":125,"Achievement %":17.6,"Yet to Achieve":103,"Parent SO":"Mudinepalli S.O"},{"Office Name":"Dandiganapudi B.O","Accounts Opened":46,"Accounts Closed":24,"Net Accounts":22,"Office Type":"BO","Annual Target":300,"Proportionate Target":125,"Achievement %":17.6,"Yet to Achieve":103,"Parent SO":"Tamirisa S.O"},{"Office Name":"Vempadu B.O","Accounts Opened":116,"Accounts Closed":96,"Net Accounts":20,"Office Type":"BO","Annual Target":300,"Proportionate Target":125,"Achievement %":16,"Yet to Achieve":105,"Parent SO":"Manikonda S.O"},{"Office Name":"Peruru B.O","Accounts Opened":38,"Accounts Closed":25,"Net Accounts":13,"Office Type":"BO","Annual Target":300,"Proportionate Target":125,"Achievement %":10.4,"Yet to Achieve":112,"Parent SO":"Mudinepalli S.O"},{"Office Name":"Kudaravalli B.O","Accounts Opened":61,"Accounts Closed":48,"Net Accounts":13,"Office Type":"BO","Annual Target":300,"Proportionate Target":125,"Achievement %":10.4,"Yet to Achieve":112,"Parent SO":"Janardhanapuram S.O"},{"Office Name":"Billapadu","Accounts Opened":29,"Accounts Closed":18,"Net Accounts":11,"Office Type":"BO","Annual Target":300,"Proportionate Target":125,"Achievement %":8.799999999999999,"Yet to Achieve":114,"Parent SO":"Golvepalli (Zami) S.O"},{"Office Name":"Koduru B.O","Accounts Opened":45,"Accounts Closed":36,"Net Accounts":9,"Office Type":"BO","Annual Target":300,"Proportionate Target":125,"Achievement %":7.199999999999999,"Yet to Achieve":116,"Parent SO":"Mudinepalli S.O"},{"Office Name":"Serigolvepalli B.O","Accounts Opened":47,"Accounts Closed":38,"Net Accounts":9,"Office Type":"BO","Annual Target":300,"Proportionate Target":125,"Achievement %":7.199999999999999,"Yet to Achieve":116,"Parent SO":"Moturu S.O"},{"Office Name":"Peyyeru B.O","Accounts Opened":17,"Accounts Closed":12,"Net Accounts":5,"Office Type":"BO","Annual Target":300,"Proportionate Target":125,"Achievement %":4,"Yet to Achieve":120,"Parent SO":"Mudinepalli S.O"},{"Office Name":"Anamanapudi B.O","Accounts Opened":12,"Accounts Closed":12,"Net Accounts":0,"Office Type":"BO","Annual Target":300,"Proportionate Target":125,"Achievement %":0,"Yet to Achieve":125,"Parent SO":"Tamirisa S.O"},{"Office Name":"Ilaparru B.O","Accounts Opened":5,"Accounts Closed":11,"Net Accounts":-6,"Office Type":"BO","Annual Target":300,"Proportionate Target":125,"Achievement %":-4.8,"Yet to Achieve":131,"Parent SO":"Janardhanapuram S.O"},{"Office Name":"Tarigoppula R.S. B.O","Accounts Opened":238,"Accounts Closed":255,"Net Accounts":-17,"Office Type":"BO","Annual Target":300,"Proportionate Target":125,"Achievement %":-13.6,"Yet to Achieve":142,"Parent SO":"Manikonda S.O"},{"Office Name":"Chandrala B.O","Accounts Opened":82,"Accounts Closed":121,"Net Accounts":-39,"Office Type":"BO","Annual Target":300,"Proportionate Target":125,"Achievement %":-31.2,"Yet to Achieve":164,"Parent SO":"Angaluru S.O"}],"so_own":[{"Office Name":"Angaluru S.O","Accounts Opened":430,"Accounts Closed":56,"Net Accounts":374,"Office Type":"SO","Annual Target":600,"Proportionate Target":250,"Achievement %":149.6,"Yet to Achieve":0,"Parent SO":"Angaluru S.O"},{"Office Name":"Ventrapragada S.O","Accounts Opened":364,"Accounts Closed":47,"Net Accounts":317,"Office Type":"SO","Annual Target":600,"Proportionate Target":250,"Achievement %":126.8,"Yet to Achieve":0,"Parent SO":"Ventrapragada S.O"},{"Office Name":"Vunguturu S.O (Krishna)","Accounts Opened":367,"Accounts Closed":67,"Net Accounts":300,"Office Type":"SO","Annual Target":600,"Proportionate Target":250,"Achievement %":120,"Yet to Achieve":0,"Parent SO":"Vunguturu S.O (Krishna)"},{"Office Name":"Rudrapaka S.O","Accounts Opened":301,"Accounts Closed":33,"Net Accounts":268,"Office Type":"SO","Annual Target":600,"Proportionate Target":250,"Achievement %":107.2,"Yet to Achieve":0,"Parent SO":"Rudrapaka S.O"},{"Office Name":"Mudunuru S.O","Accounts Opened":311,"Accounts Closed":66,"Net Accounts":245,"Office Type":"SO","Annual Target":600,"Proportionate Target":250,"Achievement %":98,"Yet to Achieve":5,"Parent SO":"Mudunuru S.O"},{"Office Name":"Moturu S.O","Accounts Opened":277,"Accounts Closed":46,"Net Accounts":231,"Office Type":"SO","Annual Target":600,"Proportionate Target":250,"Achievement %":92.4,"Yet to Achieve":19,"Parent SO":"Moturu S.O"},{"Office Name":"Mudinepalli S.O","Accounts Opened":436,"Accounts Closed":235,"Net Accounts":201,"Office Type":"SO","Annual Target":600,"Proportionate Target":250,"Achievement %":80.4,"Yet to Achieve":49,"Parent SO":"Mudinepalli S.O"},{"Office Name":"Pedamaddali S.O","Accounts Opened":222,"Accounts Closed":26,"Net Accounts":196,"Office Type":"SO","Annual Target":600,"Proportionate Target":250,"Achievement %":78.4,"Yet to Achieve":54,"Parent SO":"Pedamaddali S.O"},{"Office Name":"Manikonda S.O","Accounts Opened":202,"Accounts Closed":49,"Net Accounts":153,"Office Type":"SO","Annual Target":600,"Proportionate Target":250,"Achievement %":61.2,"Yet to Achieve":97,"Parent SO":"Manikonda S.O"},{"Office Name":"Rajendranagar Colony S.O","Accounts Opened":330,"Accounts Closed":190,"Net Accounts":140,"Office Type":"SO","Annual Target":600,"Proportionate Target":250,"Achievement %":56.00000000000001,"Yet to Achieve":110,"Parent SO":"Rajendranagar Colony S.O"},{"Office Name":"Golvepalli (Zami) S.O","Accounts Opened":135,"Accounts Closed":12,"Net Accounts":123,"Office Type":"SO","Annual Target":600,"Proportionate Target":250,"Achievement %":49.2,"Yet to Achieve":127,"Parent SO":"Golvepalli (Zami) S.O"},{"Office Name":"Tamirisa S.O","Accounts Opened":165,"Accounts Closed":49,"Net Accounts":116,"Office Type":"SO","Annual Target":600,"Proportionate Target":250,"Achievement %":46.40000000000001,"Yet to Achieve":134,"Parent SO":"Tamirisa S.O"},{"Office Name":"Janardhanapuram S.O","Accounts Opened":194,"Accounts Closed":86,"Net Accounts":108,"Office Type":"SO","Annual Target":600,"Proportionate Target":250,"Achievement %":43.2,"Yet to Achieve":142,"Parent SO":"Janardhanapuram S.O"},{"Office Name":"Elamarru S.O","Accounts Opened":104,"Accounts Closed":56,"Net Accounts":48,"Office Type":"SO","Annual Target":600,"Proportionate Target":250,"Achievement %":19.2,"Yet to Achieve":202,"Parent SO":"Elamarru S.O"},{"Office Name":"Indupalli S.O","Accounts Opened":163,"Accounts Closed":126,"Net Accounts":37,"Office Type":"SO","Annual Target":600,"Proportionate Target":250,"Achievement %":14.8,"Yet to Achieve":213,"Parent SO":"Indupalli S.O"}],"so_comb":[{"SO Name":"Angaluru S.O","BOs":5,"Combined Target":2100,"Proportionate Target":875,"Net Accounts":568,"Achievement %":64.91428571428571,"Yet to Achieve":307},{"SO Name":"Ventrapragada S.O","BOs":4,"Combined Target":1800,"Proportionate Target":750,"Net Accounts":601,"Achievement %":80.13333333333334,"Yet to Achieve":149},{"SO Name":"Vunguturu S.O (Krishna)","BOs":6,"Combined Target":2400,"Proportionate Target":1000,"Net Accounts":806,"Achievement %":80.60000000000001,"Yet to Achieve":194},{"SO Name":"Rudrapaka S.O","BOs":5,"Combined Target":2100,"Proportionate Target":875,"Net Accounts":691,"Achievement %":78.97142857142858,"Yet to Achieve":184},{"SO Name":"Mudunuru S.O","BOs":2,"Combined Target":1200,"Proportionate Target":500,"Net Accounts":552,"Achievement %":110.4,"Yet to Achieve":0},{"SO Name":"Moturu S.O","BOs":5,"Combined Target":2100,"Proportionate Target":875,"Net Accounts":547,"Achievement %":62.51428571428571,"Yet to Achieve":328},{"SO Name":"Mudinepalli S.O","BOs":13,"Combined Target":4500,"Proportionate Target":1875,"Net Accounts":769,"Achievement %":41.013333333333335,"Yet to Achieve":1106},{"SO Name":"Pedamaddali S.O","BOs":1,"Combined Target":900,"Proportionate Target":375,"Net Accounts":241,"Achievement %":64.26666666666667,"Yet to Achieve":134},{"SO Name":"Manikonda S.O","BOs":5,"Combined Target":2100,"Proportionate Target":875,"Net Accounts":454,"Achievement %":51.88571428571429,"Yet to Achieve":421},{"SO Name":"Rajendranagar Colony S.O","BOs":0,"Combined Target":600,"Proportionate Target":250,"Net Accounts":140,"Achievement %":56.00000000000001,"Yet to Achieve":110},{"SO Name":"Golvepalli (Zami) S.O","BOs":5,"Combined Target":2100,"Proportionate Target":875,"Net Accounts":389,"Achievement %":44.457142857142856,"Yet to Achieve":486},{"SO Name":"Tamirisa S.O","BOs":6,"Combined Target":2400,"Proportionate Target":1000,"Net Accounts":388,"Achievement %":38.800000000000004,"Yet to Achieve":612},{"SO Name":"Janardhanapuram S.O","BOs":10,"Combined Target":3600,"Proportionate Target":1500,"Net Accounts":787,"Achievement %":52.46666666666666,"Yet to Achieve":713},{"SO Name":"Elamarru S.O","BOs":2,"Combined Target":1200,"Proportionate Target":500,"Net Accounts":133,"Achievement %":26.6,"Yet to Achieve":367},{"SO Name":"Indupalli S.O","BOs":3,"Combined Target":1500,"Proportionate Target":625,"Net Accounts":315,"Achievement %":50.4,"Yet to Achieve":310}],"all":[{"Office Name":"Appikatla B.O","Accounts Opened":235,"Accounts Closed":50,"Net Accounts":185,"Office Type":"BO","Annual Target":300,"Proportionate Target":125,"Achievement %":148,"Yet to Achieve":0,"Parent SO":"Mudunuru S.O"},{"Office Name":"Koyyagurapadu B.O","Accounts Opened":181,"Accounts Closed":24,"Net Accounts":157,"Office Type":"BO","Annual Target":300,"Proportionate Target":125,"Achievement %":125.6,"Yet to Achieve":0,"Parent SO":"Vunguturu S.O (Krishna)"},{"Office Name":"Vennanapudi B.O","Accounts Opened":257,"Accounts Closed":112,"Net Accounts":145,"Office Type":"BO","Annual Target":300,"Proportionate Target":125,"Achievement %":116,"Yet to Achieve":0,"Parent SO":"Janardhanapuram S.O"},{"Office Name":"Dosapadu B.O","Accounts Opened":167,"Accounts Closed":27,"Net Accounts":140,"Office Type":"BO","Annual Target":300,"Proportionate Target":125,"Achievement %":112,"Yet to Achieve":0,"Parent SO":"Janardhanapuram S.O"},{"Office Name":"Komatigunta Lock B.O","Accounts Opened":188,"Accounts Closed":64,"Net Accounts":124,"Office Type":"BO","Annual Target":300,"Proportionate Target":125,"Achievement %":99.2,"Yet to Achieve":1,"Parent SO":"Manikonda S.O"},{"Office Name":"Bollapadu B.O","Accounts Opened":147,"Accounts Closed":25,"Net Accounts":122,"Office Type":"BO","Annual Target":300,"Proportionate Target":125,"Achievement %":97.6,"Yet to Achieve":3,"Parent SO":"Mudunuru S.O"},{"Office Name":"Nandamuru B.O","Accounts Opened":198,"Accounts Closed":80,"Net Accounts":118,"Office Type":"BO","Annual Target":300,"Proportionate Target":125,"Achievement %":94.39999999999999,"Yet to Achieve":7,"Parent SO":"Indupalli S.O"},{"Office Name":"Vinnakota B.O","Accounts Opened":135,"Accounts Closed":20,"Net Accounts":115,"Office Type":"BO","Annual Target":300,"Proportionate Target":125,"Achievement %":92,"Yet to Achieve":10,"Parent SO":"Mudinepalli S.O"},{"Office Name":"Pedapalaparru B.O","Accounts Opened":130,"Accounts Closed":18,"Net Accounts":112,"Office Type":"BO","Annual Target":300,"Proportionate Target":125,"Achievement %":89.60000000000001,"Yet to Achieve":13,"Parent SO":"Moturu S.O"},{"Office Name":"Vemanda B.O","Accounts Opened":154,"Accounts Closed":43,"Net Accounts":111,"Office Type":"BO","Annual Target":300,"Proportionate Target":125,"Achievement %":88.8,"Yet to Achieve":14,"Parent SO":"Indupalli S.O"},{"Office Name":"Bokinala B.O","Accounts Opened":172,"Accounts Closed":64,"Net Accounts":108,"Office Type":"BO","Annual Target":300,"Proportionate Target":125,"Achievement %":86.4,"Yet to Achieve":17,"Parent SO":"Manikonda S.O"},{"Office Name":"Gunnanapudi B.O","Accounts Opened":126,"Accounts Closed":23,"Net Accounts":103,"Office Type":"BO","Annual Target":300,"Proportionate Target":125,"Achievement %":82.39999999999999,"Yet to Achieve":22,"Parent SO":"Rudrapaka S.O"},{"Office Name":"Moparru B.O","Accounts Opened":121,"Accounts Closed":19,"Net Accounts":102,"Office Type":"BO","Annual Target":300,"Proportionate Target":125,"Achievement %":81.6,"Yet to Achieve":23,"Parent SO":"Janardhanapuram S.O"},{"Office Name":"Garapadu B.O","Accounts Opened":111,"Accounts Closed":10,"Net Accounts":101,"Office Type":"BO","Annual Target":300,"Proportionate Target":125,"Achievement %":80.80000000000001,"Yet to Achieve":24,"Parent SO":"Vunguturu S.O (Krishna)"},{"Office Name":"Tativarru B.O","Accounts Opened":118,"Accounts Closed":17,"Net Accounts":101,"Office Type":"BO","Annual Target":300,"Proportionate Target":125,"Achievement %":80.80000000000001,"Yet to Achieve":24,"Parent SO":"Golvepalli (Zami) S.O"},{"Office Name":"Putlacheruvu B.O","Accounts Opened":137,"Accounts Closed":37,"Net Accounts":100,"Office Type":"BO","Annual Target":300,"Proportionate Target":125,"Achievement %":80,"Yet to Achieve":25,"Parent SO":"Rudrapaka S.O"},{"Office Name":"Valivarthipadu B.O","Accounts Opened":137,"Accounts Closed":39,"Net Accounts":98,"Office Type":"BO","Annual Target":300,"Proportionate Target":125,"Achievement %":78.4,"Yet to Achieve":27,"Parent SO":"Tamirisa S.O"},{"Office Name":"Bhushanagulla B.O","Accounts Opened":106,"Accounts Closed":9,"Net Accounts":97,"Office Type":"BO","Annual Target":300,"Proportionate Target":125,"Achievement %":77.60000000000001,"Yet to Achieve":28,"Parent SO":"Ventrapragada S.O"},{"Office Name":"Velinuthala B.O","Accounts Opened":147,"Accounts Closed":53,"Net Accounts":94,"Office Type":"BO","Annual Target":300,"Proportionate Target":125,"Achievement %":75.2,"Yet to Achieve":31,"Parent SO":"Vunguturu S.O (Krishna)"},{"Office Name":"Bommuluru B.O","Accounts Opened":143,"Accounts Closed":50,"Net Accounts":93,"Office Type":"BO","Annual Target":300,"Proportionate Target":125,"Achievement %":74.4,"Yet to Achieve":32,"Parent SO":"Angaluru S.O"},{"Office Name":"Kanukollu B.O","Accounts Opened":140,"Accounts Closed":48,"Net Accounts":92,"Office Type":"BO","Annual Target":300,"Proportionate Target":125,"Achievement %":73.6,"Yet to Achieve":33,"Parent SO":"Mudinepalli S.O"},{"Office Name":"Guruvindagunta B.O","Accounts Opened":101,"Accounts Closed":11,"Net Accounts":90,"Office Type":"BO","Annual Target":300,"Proportionate Target":125,"Achievement %":72,"Yet to Achieve":35,"Parent SO":"Ventrapragada S.O"},{"Office Name":"Ingilipakalanka B.O","Accounts Opened":111,"Accounts Closed":23,"Net Accounts":88,"Office Type":"BO","Annual Target":300,"Proportionate Target":125,"Achievement %":70.39999999999999,"Yet to Achieve":37,"Parent SO":"Rudrapaka S.O"},{"Office Name":"Chowtapalli B.O","Accounts Opened":131,"Accounts Closed":49,"Net Accounts":82,"Office Type":"BO","Annual Target":300,"Proportionate Target":125,"Achievement %":65.60000000000001,"Yet to Achieve":43,"Parent SO":"Moturu S.O"},{"Office Name":"Nandigamalanka B.O","Accounts Opened":79,"Accounts Closed":6,"Net Accounts":73,"Office Type":"BO","Annual Target":300,"Proportionate Target":125,"Achievement %":58.4,"Yet to Achieve":52,"Parent SO":"Rudrapaka S.O"},{"Office Name":"Vadali B.O","Accounts Opened":106,"Accounts Closed":34,"Net Accounts":72,"Office Type":"BO","Annual Target":300,"Proportionate Target":125,"Achievement %":57.59999999999999,"Yet to Achieve":53,"Parent SO":"Mudinepalli S.O"},{"Office Name":"Ponukumadu B.O","Accounts Opened":86,"Accounts Closed":15,"Net Accounts":71,"Office Type":"BO","Annual Target":300,"Proportionate Target":125,"Achievement %":56.8,"Yet to Achieve":54,"Parent SO":"Vunguturu S.O (Krishna)"},{"Office Name":"Gandhi Asramam B.O","Accounts Opened":77,"Accounts Closed":7,"Net Accounts":70,"Office Type":"BO","Annual Target":300,"Proportionate Target":125,"Achievement %":56.00000000000001,"Yet to Achieve":55,"Parent SO":"Golvepalli (Zami) S.O"},{"Office Name":"Nandivada B.O","Accounts Opened":84,"Accounts Closed":15,"Net Accounts":69,"Office Type":"BO","Annual Target":300,"Proportionate Target":125,"Achievement %":55.2,"Yet to Achieve":56,"Parent SO":"Janardhanapuram S.O"},{"Office Name":"Guntakoduru B.O","Accounts Opened":83,"Accounts Closed":17,"Net Accounts":66,"Office Type":"BO","Annual Target":300,"Proportionate Target":125,"Achievement %":52.8,"Yet to Achieve":59,"Parent SO":"Moturu S.O"},{"Office Name":"Pedavirivada B.O","Accounts Opened":72,"Accounts Closed":6,"Net Accounts":66,"Office Type":"BO","Annual Target":300,"Proportionate Target":125,"Achievement %":52.8,"Yet to Achieve":59,"Parent SO":"Janardhanapuram S.O"},{"Office Name":"Tenneru B.O","Accounts Opened":224,"Accounts Closed":158,"Net Accounts":66,"Office Type":"BO","Annual Target":300,"Proportionate Target":125,"Achievement %":52.8,"Yet to Achieve":59,"Parent SO":"Manikonda S.O"},{"Office Name":"Pedakamanapudi B.O","Accounts Opened":94,"Accounts Closed":30,"Net Accounts":64,"Office Type":"BO","Annual Target":300,"Proportionate Target":125,"Achievement %":51.2,"Yet to Achieve":61,"Parent SO":"Mudinepalli S.O"},{"Office Name":"Lakshminarasimhapuram B.O","Accounts Opened":71,"Accounts Closed":9,"Net Accounts":62,"Office Type":"BO","Annual Target":300,"Proportionate Target":125,"Achievement %":49.6,"Yet to Achieve":63,"Parent SO":"Janardhanapuram S.O"},{"Office Name":"Lingavaram B.O","Accounts Opened":78,"Accounts Closed":19,"Net Accounts":59,"Office Type":"BO","Annual Target":300,"Proportionate Target":125,"Achievement %":47.2,"Yet to Achieve":66,"Parent SO":"Tamirisa S.O"},{"Office Name":"Unikili B.O","Accounts Opened":66,"Accounts Closed":7,"Net Accounts":59,"Office Type":"BO","Annual Target":300,"Proportionate Target":125,"Achievement %":47.2,"Yet to Achieve":66,"Parent SO":"Rudrapaka S.O"},{"Office Name":"Siddantham B.O","Accounts Opened":132,"Accounts Closed":77,"Net Accounts":55,"Office Type":"BO","Annual Target":300,"Proportionate Target":125,"Achievement %":44,"Yet to Achieve":70,"Parent SO":"Angaluru S.O"},{"Office Name":"Komaravolu B.O","Accounts Opened":138,"Accounts Closed":85,"Net Accounts":53,"Office Type":"BO","Annual Target":300,"Proportionate Target":125,"Achievement %":42.4,"Yet to Achieve":72,"Parent SO":"Golvepalli (Zami) S.O"},{"Office Name":"Pedaparupudi B.O","Accounts Opened":73,"Accounts Closed":20,"Net Accounts":53,"Office Type":"BO","Annual Target":300,"Proportionate Target":125,"Achievement %":42.4,"Yet to Achieve":72,"Parent SO":"Ventrapragada S.O"},{"Office Name":"Veldipadu B.O","Accounts Opened":89,"Accounts Closed":36,"Net Accounts":53,"Office Type":"BO","Annual Target":300,"Proportionate Target":125,"Achievement %":42.4,"Yet to Achieve":72,"Parent SO":"Vunguturu S.O (Krishna)"},{"Office Name":"Ponukumada B.O","Accounts Opened":79,"Accounts Closed":27,"Net Accounts":52,"Office Type":"BO","Annual Target":300,"Proportionate Target":125,"Achievement %":41.6,"Yet to Achieve":73,"Parent SO":"Tamirisa S.O"},{"Office Name":"Chinaparupudi B.O","Accounts Opened":111,"Accounts Closed":60,"Net Accounts":51,"Office Type":"BO","Annual Target":300,"Proportionate Target":125,"Achievement %":40.8,"Yet to Achieve":74,"Parent SO":"Elamarru S.O"},{"Office Name":"Lankapalli Agraharam B.O","Accounts Opened":60,"Accounts Closed":11,"Net Accounts":49,"Office Type":"BO","Annual Target":300,"Proportionate Target":125,"Achievement %":39.2,"Yet to Achieve":76,"Parent SO":"Indupalli S.O"},{"Office Name":"Dondapadu B.O","Accounts Opened":81,"Accounts Closed":34,"Net Accounts":47,"Office Type":"BO","Annual Target":300,"Proportionate Target":125,"Achievement %":37.6,"Yet to Achieve":78,"Parent SO":"Moturu S.O"},{"Office Name":"Nuzella B.O","Accounts Opened":105,"Accounts Closed":58,"Net Accounts":47,"Office Type":"BO","Annual Target":300,"Proportionate Target":125,"Achievement %":37.6,"Yet to Achieve":78,"Parent SO":"Angaluru S.O"},{"Office Name":"Addada B.O","Accounts Opened":78,"Accounts Closed":33,"Net Accounts":45,"Office Type":"BO","Annual Target":300,"Proportionate Target":125,"Achievement %":36,"Yet to Achieve":80,"Parent SO":"Pedamaddali S.O"},{"Office Name":"Ramapuram B.O","Accounts Opened":61,"Accounts Closed":17,"Net Accounts":44,"Office Type":"BO","Annual Target":300,"Proportionate Target":125,"Achievement %":35.2,"Yet to Achieve":81,"Parent SO":"Janardhanapuram S.O"},{"Office Name":"Tummalapalli B.O","Accounts Opened":88,"Accounts Closed":44,"Net Accounts":44,"Office Type":"BO","Annual Target":300,"Proportionate Target":125,"Achievement %":35.2,"Yet to Achieve":81,"Parent SO":"Janardhanapuram S.O"},{"Office Name":"Vanapumala B.O","Accounts Opened":58,"Accounts Closed":14,"Net Accounts":44,"Office Type":"BO","Annual Target":300,"Proportionate Target":125,"Achievement %":35.2,"Yet to Achieve":81,"Parent SO":"Ventrapragada S.O"},{"Office Name":"Guraza B.O","Accounts Opened":63,"Accounts Closed":21,"Net Accounts":42,"Office Type":"BO","Annual Target":300,"Proportionate Target":125,"Achievement %":33.6,"Yet to Achieve":83,"Parent SO":"Mudinepalli S.O"},{"Office Name":"Komarru B.O","Accounts Opened":79,"Accounts Closed":37,"Net Accounts":42,"Office Type":"BO","Annual Target":300,"Proportionate Target":125,"Achievement %":33.6,"Yet to Achieve":83,"Parent SO":"Mudinepalli S.O"},{"Office Name":"Polukonda B.O","Accounts Opened":75,"Accounts Closed":34,"Net Accounts":41,"Office Type":"BO","Annual Target":300,"Proportionate Target":125,"Achievement %":32.8,"Yet to Achieve":84,"Parent SO":"Tamirisa S.O"},{"Office Name":"Serikalavapudi B.O","Accounts Opened":55,"Accounts Closed":17,"Net Accounts":38,"Office Type":"BO","Annual Target":300,"Proportionate Target":125,"Achievement %":30.4,"Yet to Achieve":87,"Parent SO":"Angaluru S.O"},{"Office Name":"Chinapalaparru B.O","Accounts Opened":64,"Accounts Closed":29,"Net Accounts":35,"Office Type":"BO","Annual Target":300,"Proportionate Target":125,"Achievement %":28,"Yet to Achieve":90,"Parent SO":"Mudinepalli S.O"},{"Office Name":"Edulamaddali B.O","Accounts Opened":104,"Accounts Closed":70,"Net Accounts":34,"Office Type":"BO","Annual Target":300,"Proportionate Target":125,"Achievement %":27.2,"Yet to Achieve":91,"Parent SO":"Elamarru S.O"},{"Office Name":"Lingala B.O","Accounts Opened":79,"Accounts Closed":47,"Net Accounts":32,"Office Type":"BO","Annual Target":300,"Proportionate Target":125,"Achievement %":25.6,"Yet to Achieve":93,"Parent SO":"Mudinepalli S.O"},{"Office Name":"Chinayerukapadu B.O","Accounts Opened":62,"Accounts Closed":31,"Net Accounts":31,"Office Type":"BO","Annual Target":300,"Proportionate Target":125,"Achievement %":24.8,"Yet to Achieve":94,"Parent SO":"Golvepalli (Zami) S.O"},{"Office Name":"Amudalapalli B.O","Accounts Opened":43,"Accounts Closed":13,"Net Accounts":30,"Office Type":"BO","Annual Target":300,"Proportionate Target":125,"Achievement %":24,"Yet to Achieve":95,"Parent SO":"Vunguturu S.O (Krishna)"},{"Office Name":"Sankarshanapuram B.O","Accounts Opened":29,"Accounts Closed":4,"Net Accounts":25,"Office Type":"BO","Annual Target":300,"Proportionate Target":125,"Achievement %":20,"Yet to Achieve":100,"Parent SO":"Mudinepalli S.O"},{"Office Name":"Dandiganapudi B.O","Accounts Opened":46,"Accounts Closed":24,"Net Accounts":22,"Office Type":"BO","Annual Target":300,"Proportionate Target":125,"Achievement %":17.6,"Yet to Achieve":103,"Parent SO":"Tamirisa S.O"},{"Office Name":"K.P.Agraharam B.O","Accounts Opened":145,"Accounts Closed":123,"Net Accounts":22,"Office Type":"BO","Annual Target":300,"Proportionate Target":125,"Achievement %":17.6,"Yet to Achieve":103,"Parent SO":"Mudinepalli S.O"},{"Office Name":"Vempadu B.O","Accounts Opened":116,"Accounts Closed":96,"Net Accounts":20,"Office Type":"BO","Annual Target":300,"Proportionate Target":125,"Achievement %":16,"Yet to Achieve":105,"Parent SO":"Manikonda S.O"},{"Office Name":"Kudaravalli B.O","Accounts Opened":61,"Accounts Closed":48,"Net Accounts":13,"Office Type":"BO","Annual Target":300,"Proportionate Target":125,"Achievement %":10.4,"Yet to Achieve":112,"Parent SO":"Janardhanapuram S.O"},{"Office Name":"Peruru B.O","Accounts Opened":38,"Accounts Closed":25,"Net Accounts":13,"Office Type":"BO","Annual Target":300,"Proportionate Target":125,"Achievement %":10.4,"Yet to Achieve":112,"Parent SO":"Mudinepalli S.O"},{"Office Name":"Billapadu","Accounts Opened":29,"Accounts Closed":18,"Net Accounts":11,"Office Type":"BO","Annual Target":300,"Proportionate Target":125,"Achievement %":8.799999999999999,"Yet to Achieve":114,"Parent SO":"Golvepalli (Zami) S.O"},{"Office Name":"Koduru B.O","Accounts Opened":45,"Accounts Closed":36,"Net Accounts":9,"Office Type":"BO","Annual Target":300,"Proportionate Target":125,"Achievement %":7.199999999999999,"Yet to Achieve":116,"Parent SO":"Mudinepalli S.O"},{"Office Name":"Serigolvepalli B.O","Accounts Opened":47,"Accounts Closed":38,"Net Accounts":9,"Office Type":"BO","Annual Target":300,"Proportionate Target":125,"Achievement %":7.199999999999999,"Yet to Achieve":116,"Parent SO":"Moturu S.O"},{"Office Name":"Peyyeru B.O","Accounts Opened":17,"Accounts Closed":12,"Net Accounts":5,"Office Type":"BO","Annual Target":300,"Proportionate Target":125,"Achievement %":4,"Yet to Achieve":120,"Parent SO":"Mudinepalli S.O"},{"Office Name":"Anamanapudi B.O","Accounts Opened":12,"Accounts Closed":12,"Net Accounts":0,"Office Type":"BO","Annual Target":300,"Proportionate Target":125,"Achievement %":0,"Yet to Achieve":125,"Parent SO":"Tamirisa S.O"},{"Office Name":"Ilaparru B.O","Accounts Opened":5,"Accounts Closed":11,"Net Accounts":-6,"Office Type":"BO","Annual Target":300,"Proportionate Target":125,"Achievement %":-4.8,"Yet to Achieve":131,"Parent SO":"Janardhanapuram S.O"},{"Office Name":"Tarigoppula R.S. B.O","Accounts Opened":238,"Accounts Closed":255,"Net Accounts":-17,"Office Type":"BO","Annual Target":300,"Proportionate Target":125,"Achievement %":-13.6,"Yet to Achieve":142,"Parent SO":"Manikonda S.O"},{"Office Name":"Chandrala B.O","Accounts Opened":82,"Accounts Closed":121,"Net Accounts":-39,"Office Type":"BO","Annual Target":300,"Proportionate Target":125,"Achievement %":-31.2,"Yet to Achieve":164,"Parent SO":"Angaluru S.O"},{"Office Name":"Gudivada H.O","Accounts Opened":1136,"Accounts Closed":732,"Net Accounts":404,"Office Type":"HO","Annual Target":2000,"Proportionate Target":833.3333333333334,"Achievement %":48.48,"Yet to Achieve":429.3333333333334,"Parent SO":"nan"},{"Office Name":"Angaluru S.O","Accounts Opened":430,"Accounts Closed":56,"Net Accounts":374,"Office Type":"SO","Annual Target":600,"Proportionate Target":250,"Achievement %":149.6,"Yet to Achieve":0,"Parent SO":"Angaluru S.O"},{"Office Name":"Ventrapragada S.O","Accounts Opened":364,"Accounts Closed":47,"Net Accounts":317,"Office Type":"SO","Annual Target":600,"Proportionate Target":250,"Achievement %":126.8,"Yet to Achieve":0,"Parent SO":"Ventrapragada S.O"},{"Office Name":"Vunguturu S.O (Krishna)","Accounts Opened":367,"Accounts Closed":67,"Net Accounts":300,"Office Type":"SO","Annual Target":600,"Proportionate Target":250,"Achievement %":120,"Yet to Achieve":0,"Parent SO":"Vunguturu S.O (Krishna)"},{"Office Name":"Rudrapaka S.O","Accounts Opened":301,"Accounts Closed":33,"Net Accounts":268,"Office Type":"SO","Annual Target":600,"Proportionate Target":250,"Achievement %":107.2,"Yet to Achieve":0,"Parent SO":"Rudrapaka S.O"},{"Office Name":"Mudunuru S.O","Accounts Opened":311,"Accounts Closed":66,"Net Accounts":245,"Office Type":"SO","Annual Target":600,"Proportionate Target":250,"Achievement %":98,"Yet to Achieve":5,"Parent SO":"Mudunuru S.O"},{"Office Name":"Moturu S.O","Accounts Opened":277,"Accounts Closed":46,"Net Accounts":231,"Office Type":"SO","Annual Target":600,"Proportionate Target":250,"Achievement %":92.4,"Yet to Achieve":19,"Parent SO":"Moturu S.O"},{"Office Name":"Mudinepalli S.O","Accounts Opened":436,"Accounts Closed":235,"Net Accounts":201,"Office Type":"SO","Annual Target":600,"Proportionate Target":250,"Achievement %":80.4,"Yet to Achieve":49,"Parent SO":"Mudinepalli S.O"},{"Office Name":"Pedamaddali S.O","Accounts Opened":222,"Accounts Closed":26,"Net Accounts":196,"Office Type":"SO","Annual Target":600,"Proportionate Target":250,"Achievement %":78.4,"Yet to Achieve":54,"Parent SO":"Pedamaddali S.O"},{"Office Name":"Manikonda S.O","Accounts Opened":202,"Accounts Closed":49,"Net Accounts":153,"Office Type":"SO","Annual Target":600,"Proportionate Target":250,"Achievement %":61.2,"Yet to Achieve":97,"Parent SO":"Manikonda S.O"},{"Office Name":"Rajendranagar Colony S.O","Accounts Opened":330,"Accounts Closed":190,"Net Accounts":140,"Office Type":"SO","Annual Target":600,"Proportionate Target":250,"Achievement %":56.00000000000001,"Yet to Achieve":110,"Parent SO":"Rajendranagar Colony S.O"},{"Office Name":"Golvepalli (Zami) S.O","Accounts Opened":135,"Accounts Closed":12,"Net Accounts":123,"Office Type":"SO","Annual Target":600,"Proportionate Target":250,"Achievement %":49.2,"Yet to Achieve":127,"Parent SO":"Golvepalli (Zami) S.O"},{"Office Name":"Tamirisa S.O","Accounts Opened":165,"Accounts Closed":49,"Net Accounts":116,"Office Type":"SO","Annual Target":600,"Proportionate Target":250,"Achievement %":46.40000000000001,"Yet to Achieve":134,"Parent SO":"Tamirisa S.O"},{"Office Name":"Janardhanapuram S.O","Accounts Opened":194,"Accounts Closed":86,"Net Accounts":108,"Office Type":"SO","Annual Target":600,"Proportionate Target":250,"Achievement %":43.2,"Yet to Achieve":142,"Parent SO":"Janardhanapuram S.O"},{"Office Name":"Elamarru S.O","Accounts Opened":104,"Accounts Closed":56,"Net Accounts":48,"Office Type":"SO","Annual Target":600,"Proportionate Target":250,"Achievement %":19.2,"Yet to Achieve":202,"Parent SO":"Elamarru S.O"},{"Office Name":"Indupalli S.O","Accounts Opened":163,"Accounts Closed":126,"Net Accounts":37,"Office Type":"SO","Annual Target":600,"Proportionate Target":250,"Achievement %":14.8,"Yet to Achieve":213,"Parent SO":"Indupalli S.O"}]};
+const HOLIDAYS=[[1,"Makar Sankranti","January","14","Wednesday"],[2,"Republic Day","January","26","Monday"],[3,"Chetra Sukladi/Gudi Padava/UGADI/Cheti Chand","March","19","Thursday"],[4,"Id-ul-Fitr","March","21","Saturday"],[5,"Mahavir Jayanthi","March","31","Tuesday"],[6,"Good Friday","April","03","Friday"],[7,"Buddha Purnima","May","01","Friday"],[8,"Id-ul-Zuha (Bakrid)","May","27","Wednesday"],[9,"Muharram","June","26","Friday"],[10,"Independence Day","August","15","Saturday"],[11,"Milad-un-Nabi or Id-e-Milad (Birthday of Prophet Mohammad)","August","26","Wednesday"],[12,"Ganesh Chaturthi/Vinayaka Chaturthi","September","14","Monday"],[13,"Mahatma Gandhi's Birthday","October","02","Friday"],[14,"Dussehra","October","20","Tuesday"],[15,"Diwali (Deepavali)","November","08","Sunday"],[16,"Guru Nanak's Birthday","November","24","Tuesday"],[17,"Christmas Day","December","25","Friday"]];
+
+function pctClass(p){
+  if(p>=100) return "g"; if(p>=80) return "y"; if(p>=60) return "o"; return "r";
+}
+function fmt(n){ return Number(n||0).toLocaleString("en-IN"); }
+function pct(n){ return (Number(n||0)).toFixed(1)+"%"; }
+function allRows(){ return D.all||[]; }
+function boRows(){ return D.bo||[]; }
+function soRows(){ return D.so_own||[]; }
+function combinedRows(){ return D.so_comb||[]; }
+
+function tab(id,btn){
+  document.querySelectorAll(".panel").forEach(x=>x.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+  document.querySelectorAll(".tabs button").forEach(x=>x.classList.remove("active"));
+  if(btn) btn.classList.add("active");
+  render();
+}
+
+function table(rows, columns, withRank=true){
+  let out="<table><thead><tr>";
+  if(withRank) out+="<th>Rank</th>";
+  columns.forEach(c=>out+="<th>"+c.label+"</th>");
+  out+="</tr></thead><tbody>";
+  rows.forEach((r,i)=>{
+    const p=Number(r["Achievement %"]||0);
+    out+="<tr class='"+pctClass(p)+"'>";
+    if(withRank) out+="<td>"+(i+1)+"</td>";
+    columns.forEach(c=>{
+      let v=(c.key==="__Yet to Open")
+        ? Math.max(Number(r["Proportionate Target"]||0)-Number(r["Net Accounts"]||0),0)
+        : r[c.key];
+      if(c.key==="Achievement %") v=pct(v);
+      else if(c.key==="__Yet to Open" || ["Accounts Opened","Accounts Closed","Net Accounts","Annual Target","Proportionate Target","Yet to Achieve","Combined Target"].includes(c.key)) v=fmt(v);
+      out+="<td class='"+(c.num?"num":"")+"'>"+(v??"")+"</td>";
+    });
+    out+="</tr>";
+  });
+  out+="</tbody></table>";
+  return out;
+}
+
+function compact(rows){
+  return "<table><thead><tr><th>Office</th><th>Net</th><th>Achievement</th></tr></thead><tbody>"+
+    rows.map(r=>"<tr class='"+pctClass(r["Achievement %"])+"'><td>"+r["Office Name"]+"</td><td class='num'>"+fmt(r["Net Accounts"])+"</td><td class='num'><b>"+pct(r["Achievement %"])+"</b></td></tr>").join("")+
+    "</tbody></table>";
+}
+
+function filteredAll(){ return allRows(); }
+
+
+function printReport(kind){
+  // Build the selected report using the same live dashboard data.
+  const bos = boRows().slice().sort((a,b)=>b["Achievement %"]-a["Achievement %"]);
+  const sos = soRows().slice().sort((a,b)=>b["Achievement %"]-a["Achievement %"]);
+  const comb = combinedRows().slice().sort((a,b)=>b["Achievement %"]-a["Achievement %"]);
+
+  document.getElementById("reportBOBody").innerHTML = table(bos,[
+    {label:"Office",key:"Office Name"},
+    {label:"Parent SO",key:"Parent SO"},
+    {label:"Opened",key:"Accounts Opened",num:true},
+    {label:"Closed",key:"Accounts Closed",num:true},
+    {label:"Net",key:"Net Accounts",num:true},
+    {label:"Proportionate Target",key:"Proportionate Target",num:true},
+    {label:"Achievement",key:"Achievement %",num:true}
+  ],true);
+
+  // SO + HO: include all SOs and any HO records available in the source data.
+  const ho = allRows().filter(r=>r["Office Type"]==="HO")
+    .sort((a,b)=>b["Achievement %"]-a["Achievement %"]);
+  const soho = sos.concat(ho);
+  document.getElementById("reportSOHOBody").innerHTML = table(soho,[
+    {label:"Office",key:"Office Name"},
+    {label:"Type",key:"Office Type"},
+    {label:"Opened",key:"Accounts Opened",num:true},
+    {label:"Closed",key:"Accounts Closed",num:true},
+    {label:"Net",key:"Net Accounts",num:true},
+    {label:"Proportionate Target",key:"Proportionate Target",num:true},
+    {label:"Achievement",key:"Achievement %",num:true}
+  ],true);
+
+  document.getElementById("reportCombinedBody").innerHTML = table(comb,[
+    {label:"SO",key:"SO Name"},
+    {label:"BOs",key:"BOs",num:true},
+    {label:"Combined Target",key:"Combined Target",num:true},
+    {label:"Proportionate Target",key:"Proportionate Target",num:true},
+    {label:"Net Accounts",key:"Net Accounts",num:true},
+    {label:"Achievement",key:"Achievement %",num:true},
+    {label:"Yet to Achieve",key:"Yet to Achieve",num:true}
+  ],true);
+
+  document.body.classList.remove("print-bo","print-soho","print-combined");
+  document.body.classList.add("print-"+kind);
+  window.print();
+}
+
+function render(){
+  const rows=allRows(), bos=boRows(), sos=soRows(), comb=combinedRows();
+  const opened=rows.reduce((a,r)=>a+Number(r["Accounts Opened"]||0),0);
+  const closed=rows.reduce((a,r)=>a+Number(r["Accounts Closed"]||0),0);
+  const net=rows.reduce((a,r)=>a+Number(r["Net Accounts"]||0),0);
+  document.getElementById("totalOffices").textContent=fmt(rows.length);
+  document.getElementById("boCount").textContent=fmt(bos.length);
+  document.getElementById("soCount").textContent=fmt(sos.length);
+  document.getElementById("opened").textContent=fmt(opened);
+  document.getElementById("closed").textContent=fmt(closed);
+  document.getElementById("net").textContent=fmt(net);
+
+  const target=rows.reduce((a,r)=>a+Number(r["Proportionate Target"]||0),0);
+  const overall=target?net/target*100:0;
+  document.getElementById("overallPct").textContent=pct(overall);
+  const bar=document.getElementById("overallBar"); bar.style.width=Math.max(0,Math.min(100,overall))+"%"; bar.className=overall>=100?"green":overall>=80?"amber":"red";
+  document.getElementById("strongBO").textContent=fmt(bos.filter(r=>Number(r["Achievement %"])>=100).length);
+  document.getElementById("riskBO").textContent=fmt(bos.filter(r=>Number(r["Achievement %"])<60).length);
+
+  const dist=[
+    ["Strong",rows.filter(r=>Number(r["Achievement %"])>=100).length],
+    ["On Track",rows.filter(r=>Number(r["Achievement %"])>=80&&Number(r["Achievement %"])<100).length],
+    ["Needs Attention",rows.filter(r=>Number(r["Achievement %"])>=60&&Number(r["Achievement %"])<80).length],
+    ["At Risk",rows.filter(r=>Number(r["Achievement %"])<60).length]
+  ];
+  document.getElementById("distribution").innerHTML=dist.map(x=>'<div class="mini"><span class="note">'+x[0]+'</span><b>'+fmt(x[1])+'</b><span class="note">offices</span></div>').join("");
+
+  const top=bos.slice().sort((a,b)=>b["Achievement %"]-a["Achievement %"]).slice(0,5);
+  const bot=bos.slice().sort((a,b)=>a["Achievement %"]-b["Achievement %"]).slice(0,5);
+  const topso=sos.slice().sort((a,b)=>b["Achievement %"]-a["Achievement %"]).slice(0,3);
+  const topc=comb.slice().sort((a,b)=>b["Achievement %"]-a["Achievement %"]).slice(0,5);
+  document.getElementById("topBO").innerHTML=compact(top);
+  document.getElementById("bottomBO").innerHTML=compact(bot);
+  document.getElementById("topSO").innerHTML=compact(topso);
+  document.getElementById("topCombined").innerHTML="<table><thead><tr><th>SO</th><th>Net</th><th>Achievement</th></tr></thead><tbody>"+
+    topc.map(r=>"<tr class='"+pctClass(r["Achievement %"])+"'><td>"+r["SO Name"]+"</td><td class='num'>"+fmt(r["Net Accounts"])+"</td><td class='num'><b>"+pct(r["Achievement %"])+"</b></td></tr>").join("")+"</tbody></table>";
+
+  document.getElementById("insights").innerHTML=
+    '<div class="insight"><b>Best BO:</b> '+top[0]["Office Name"]+' at '+pct(top[0]["Achievement %"])+'</div>'+
+    '<div class="insight"><b>BOs below 60%:</b> '+fmt(bos.filter(r=>Number(r["Achievement %"])<60).length)+' offices require focused action.</div>'+
+    '<div class="insight"><b>Highest SO:</b> '+topso[0]["Office Name"]+' at '+pct(topso[0]["Achievement %"])+'</div>'+
+    '<div class="insight"><b>Negative net:</b> '+fmt(bos.filter(r=>Number(r["Net Accounts"])<0).length)+' BOs have more closures than openings.</div>';
+
+  document.getElementById("boTable").innerHTML=table(bos.slice().sort((a,b)=>b["Achievement %"]-a["Achievement %"]),[
+    {label:"Office",key:"Office Name"},{label:"Parent SO",key:"Parent SO"},{label:"Opened",key:"Accounts Opened",num:true},
+    {label:"Closed",key:"Accounts Closed",num:true},{label:"Net",key:"Net Accounts",num:true},
+    {label:"Prop. Target",key:"Proportionate Target",num:true},{label:"Achievement",key:"Achievement %",num:true}
+  ]);
+  document.getElementById("soTable").innerHTML=table(sos.slice().sort((a,b)=>b["Achievement %"]-a["Achievement %"]),[
+    {label:"SO",key:"Office Name"},{label:"Opened",key:"Accounts Opened",num:true},{label:"Closed",key:"Accounts Closed",num:true},
+    {label:"Net",key:"Net Accounts",num:true},{label:"Prop. Target",key:"Proportionate Target",num:true},{label:"Achievement",key:"Achievement %",num:true}
+  ]);
+  document.getElementById("combinedTable").innerHTML=table(comb.slice().sort((a,b)=>b["Achievement %"]-a["Achievement %"]),[
+    {label:"SO",key:"SO Name"},{label:"BOs",key:"BOs",num:true},{label:"Combined Target",key:"Combined Target",num:true},
+    {label:"Prop. Target",key:"Proportionate Target",num:true},{label:"Net",key:"Net Accounts",num:true},{label:"Achievement",key:"Achievement %",num:true}
+  ],true);
+
+}
+render();
+
+window.addEventListener("afterprint",()=>document.body.classList.remove("print-bo","print-soho","print-combined"));
+</script>
+</body>
+</html>

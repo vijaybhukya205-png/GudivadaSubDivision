@@ -1,0 +1,670 @@
+<!DOCTYPE html><html style="height: 100%"><head><meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"><title>
+	Product Wise A/C Report
+</title><link rel="icon" type="image/png" sizes="200x150" href="../Library/Images/indiapostlogo.jpg"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, shrink-to-fit=no" name="viewport">
+
+    <script src="../Library/js/jquery-3.5.1.min.js"></script>
+    <script src="../Library/js/jquery-ui.min.js"></script>
+    <script src="../Library/js/fontawesome.min.js"></script>
+    <script src="../Library/dataTable/datatables.min.js"></script>
+    
+
+
+    <link href="../Library/css/style.css" rel="stylesheet"><link href="../Library/fonts/css/all.css" rel="stylesheet"><link href="../Library/css/jquery-ui.min.css" rel="stylesheet"><link href="../Library/css/bootstrap.min.css" rel="stylesheet"><link href="../Library/dataTable/datatables.min.css" rel="stylesheet">
+
+
+    <!--  <script src="js/jquery-3.5.1.min.js"></script>
+     <script src="js/bootstrap.min.js"></script>
+    <script src="js/jquery-ui.min.js"></script>
+    <script src="js/fontawesome.min.js"></script>
+    <script src="DataTable/datatables.min.js"></script>
+
+
+      <link href="Library/cssbootstrap.min.css" rel="stylesheet" /><link href="Library/cssstyle.css" rel="stylesheet" /><link href="fonts/css/all.css" rel="stylesheet" /><link href="Library/cssjquery-ui.min.css" rel="stylesheet" /><link href="DataTable/datatables.min.css" rel="stylesheet" />-->
+
+
+
+    <style>
+        #sidebar, #sidebar ul li a, #sidebar ul li.active > a {
+            /* color:#fce508;
+               color:#c6ff00;*/
+            font-size: large;
+            color: white;
+        }
+
+        .fa, .fas {
+            /* color:#fce508;*/
+            color: #fce508;
+        }
+    </style>
+    <style type="text/css">
+        /*.table { background-color:#FFFFE0;color:black;   box-shadow: 10px 0 8px -2px #888; }
+.table th { width:42%;font:bold 12px/1.0em Arial, Helvetica, Sans-Serif;letter-spacing:0.2em;background-color:#BDB76B;color:black; }
+.table th { padding:3px;border:1px 1px solid #BDB76B; }*/
+
+        .table {
+            border-top: 7px solid #b02a26;
+            border-bottom: 7px solid #b02a26;
+            background-color: #FFFAFA;
+            border-radius: 20px;
+        }
+
+        .tr {
+            border: 1px solid #089ACD;
+        }
+
+
+        /*  .table { border-top:7px solid #089ACD; border-bottom:7px solid #089ACD; background-color:#FDF2F3; #b02a26;#F2FAFD}*/
+    </style>
+
+    
+    <style>
+        
+        .gradient-text {
+            position: relative;
+            text-shadow: .15em .15em .35em #888;
+            font-style: italic;
+            color: #341BC0;
+            &::after;
+
+        {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            right: 0;
+            background: radial-gradient(circle at 70% 3%, #aa048b, #bb9801);
+            mix-blend-mode: screen;
+        }
+
+        }
+
+        .ui-widget-content .ui-icon {
+            background-image: url(../Library/images/ui-icons_444444_256x240.png);
+        }
+
+        .lbl {
+            float : right;
+        }
+
+        
+          
+
+        
+    </style>
+
+
+</head>
+<body>
+    <form method="post" action="./CBSTrans3.aspx" id="form1">
+<div class="aspNetHidden">
+<input type="hidden" name="__EVENTTARGET" id="__EVENTTARGET" value="" style="">
+<input type="hidden" name="__EVENTARGUMENT" id="__EVENTARGUMENT" value="" style="">
+<input type="hidden" name="__LASTFOCUS" id="__LASTFOCUS" value="" style="">
+<input type="hidden" name="__VIEWSTATE" id="__VIEWSTATE" value="/wEPDwUJNzAxNjc3NzcxD2QWAmYPZBYCAgMPZBYGAgsPDxYCHgRUZXh0BQQyMDI2ZGQCDQ8PFgIfAAUXUHJvZHVjdCBXaXNlIEEvQyBSZXBvcnRkZAIPD2QWDgIDDw8WAh8ABR1EYXRhIFVwZGF0ZWQgdXB0bzogMTkvMDgvMjAyNmRkAgUPEA8WBh4NRGF0YVRleHRGaWVsZAUETmFtZR4ORGF0YVZhbHVlRmllbGQFBE5hbWUeC18hRGF0YUJvdW5kZ2QQFRgNU2VsZWN0IENpcmNsZRVBbmRocmEgUHJhZGVzaCBDaXJjbGUMQXNzYW0gQ2lyY2xlDEJpaGFyIENpcmNsZRJDaGF0dGlzZ2FyaCBDaXJjbGUMRGVsaGkgQ2lyY2xlDkd1amFyYXQgQ2lyY2xlDkhhcnlhbmEgQ2lyY2xlF0hpbWFjaGFsIFByYWRlc2ggQ2lyY2xlFEphbW11IEthc2htaXIgQ2lyY2xlEEpoYXJraGFuZCBDaXJjbGUQS2FybmF0YWthIENpcmNsZQ1LZXJhbGEgQ2lyY2xlFU1hZGh5YSBQcmFkZXNoIENpcmNsZRJNYWhhcmFzaHRyYSBDaXJjbGUUTm9ydGggRWFzdGVybiBDaXJjbGUNT2Rpc2hhIENpcmNsZQ1QdW5qYWIgQ2lyY2xlEFJhamFzdGhhbiBDaXJjbGUQVGFtaWxuYWR1IENpcmNsZRRVdHRhciBQcmFkZXNoIENpcmNsZRJVdHRhcmFraGFuZCBDaXJjbGUSV2VzdCBCZW5nYWwgQ2lyY2xlEFRlbGFuZ2FuYSBDaXJjbGUVGA1TZWxlY3QgQ2lyY2xlFUFuZGhyYSBQcmFkZXNoIENpcmNsZQxBc3NhbSBDaXJjbGUMQmloYXIgQ2lyY2xlEkNoYXR0aXNnYXJoIENpcmNsZQxEZWxoaSBDaXJjbGUOR3VqYXJhdCBDaXJjbGUOSGFyeWFuYSBDaXJjbGUXSGltYWNoYWwgUHJhZGVzaCBDaXJjbGUUSmFtbXUgS2FzaG1pciBDaXJjbGUQSmhhcmtoYW5kIENpcmNsZRBLYXJuYXRha2EgQ2lyY2xlDUtlcmFsYSBDaXJjbGUVTWFkaHlhIFByYWRlc2ggQ2lyY2xlEk1haGFyYXNodHJhIENpcmNsZRROb3J0aCBFYXN0ZXJuIENpcmNsZQ1PZGlzaGEgQ2lyY2xlDVB1bmphYiBDaXJjbGUQUmFqYXN0aGFuIENpcmNsZRBUYW1pbG5hZHUgQ2lyY2xlFFV0dGFyIFByYWRlc2ggQ2lyY2xlElV0dGFyYWtoYW5kIENpcmNsZRJXZXN0IEJlbmdhbCBDaXJjbGUQVGVsYW5nYW5hIENpcmNsZRQrAxhnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2cWAWZkAgcPEGQQFQENU2VsZWN0IFJlZ2lvbhUBDVNlbGVjdCBSZWdpb24UKwMBZxYBZmQCCQ8QZBAVAQ9TZWxlY3QgRGl2aXNpb24VAQ9TZWxlY3QgRGl2aXNpb24UKwMBZxYBZmQCCw8QZBAVARJTZWxlY3QgU3ViRGl2aXNpb24VARJTZWxlY3QgU3ViRGl2aXNpb24UKwMBZxYBZmQCDQ8QZGQWAWZkAhsPDxYCHwAFF1Byb2R1Y3QgV2lzZSBBL0MgUmVwb3J0ZGQYAQUeX19Db250cm9sc1JlcXVpcmVQb3N0QmFja0tleV9fFgYFHWN0bDAwJENvbnRlbnRQbGFjZUhvbGRlcjEkQUNPBR1jdGwwMCRDb250ZW50UGxhY2VIb2xkZXIxJEFDTwUdY3RsMDAkQ29udGVudFBsYWNlSG9sZGVyMSRBQ0MFHWN0bDAwJENvbnRlbnRQbGFjZUhvbGRlcjEkQUNDBR1jdGwwMCRDb250ZW50UGxhY2VIb2xkZXIxJE5FVAUdY3RsMDAkQ29udGVudFBsYWNlSG9sZGVyMSRORVRpA87Af3ggEecsnwhDf+7y4JI3u8YxtyNY3X+x2OUCGA==" style="">
+</div>
+
+<script type="text/javascript">
+//<![CDATA[
+var theForm = document.forms['form1'];
+if (!theForm) {
+    theForm = document.form1;
+}
+function __doPostBack(eventTarget, eventArgument) {
+    if (!theForm.onsubmit || (theForm.onsubmit() != false)) {
+        theForm.__EVENTTARGET.value = eventTarget;
+        theForm.__EVENTARGUMENT.value = eventArgument;
+        theForm.submit();
+    }
+}
+//]]>
+</script>
+
+
+<div class="aspNetHidden">
+
+	<input type="hidden" name="__VIEWSTATEGENERATOR" id="__VIEWSTATEGENERATOR" value="0DE1369C" style="">
+	<input type="hidden" name="__EVENTVALIDATION" id="__EVENTVALIDATION" value="/wEdACaQ0vLGSexpvWliFbqbGlFLPMBGfVeodZR8EKqTEIWxRqofD4y/JLThfcdtACLbJSNzBArJ9ky3mWeLla+XHYFOpiH/2wJlTRl3N7i6f81uPAoaB0vkZMLA1hHjDMvbIxoCgdwJuRBLlCs+6gcl6pbEpLe6yAbNKXKJ1Gj7uKZrfIxxbTiKBxsC4RTbXcQJkRV82U+8o0cLRuN6+SvZh/iG1jI23Gr5liw94F/PZHyLuRAuOWnUd++N84w0LSIB+JXCRv1+C7HQqsyV3z5XRNEBElFK2myO4JTDZFZ5jW5Va7j+NdoSkrloW3qlx11hoJ3XBElAkYNUz1P0bd9+Fz8/Pl4AfBneEetTq8HemYEmjv/unOnzX5a2ML9MwK3pyQHpIdTL/fqm3jZdck4N7tNhbSHaQq3manYTBcyO0tKFyIt0Z2Xs6NWiZUHYGsyG5ZhNnJwpHMEbLJ0mPXboJgBqLCY6XzmbRVIrjtcbEV9BVHtF8mWeYfWLdE631jArvHUdKMYemejgtzbqPh6FND99jNMhVRHnz1cpWZXC+CQTEgIW0UkSNOeCvGrsgMZa1B2z/7t7L2zF9FurN7fzrvpOfgLe0KQEkKJMUjDXLhlH5w/eYAoiAyfPsVa0KWrLom+f5IteF2Cgv0W/7lOHDVtsuMFOjAadV5Uk+U8i5GHTq2EXNfP/NUNR7b9vKGW0EnmcDoIdr1hHTMLoAsqICs6+57WO95nKSImdyGw0l0zc0xhztUNRbcM7xp3U3ybrvABzpeKm4xb9u5bPT12nvZm7qDTw44WIO9u2QeLDOu9wwXA6KzXlvKHrOw5PVIqA+phYioVcUxxM+YLiKj6GVnM+" style="">
+</div>
+        <div class="wrapper d-flex align-items-stretch">
+            <nav id="sidebar" style="background-color: #b02a26;">
+                <div class="custom-menu">
+                    <button type="button" id="sidebarCollapse" class="btn btn-danger">
+                        <i class="fa fa-bars" aria-hidden="true"></i>
+                        <span class="sr-only">Toggle Menu</span>
+                    </button>
+                </div>
+                <div class="p-4">
+                    <img src="../Library/Images/indiapostlogo.jpg" height="100" width="170">
+                    <label class="mt-2">
+                        Welcome
+                        <span id="lblusername"></span></label>
+                    <div id="pnllogin">
+	
+                        <ul class="list-unstyled">
+                            <li class="nav-item">
+                                <a class="nav-link" href="../login.aspx">
+                                    <i class="fas fa-fw fa-sign-in-alt"></i>
+                                    <span>Login</span></a>
+                            </li>
+                        </ul>
+                    
+</div>
+
+                    <hr style="color: #A7A7A7;">
+                    <ul class="list-unstyled components mb-5">
+                        <li class="nav-item">
+                            <a class="nav-link" href="../index.aspx">
+                                <!--<i class="fas fa-home"></i>-->
+                                <span>Home</span></a>
+                        </li>
+
+                        <div id="pnlCBS">
+	
+
+							<li>
+                                <a href="CBSTrans21.aspx">
+                                    <!--<i class="fas fa-exchange-alt"></i>-->
+                                    e-KYC Report</a>
+                            </li>
+							
+							<li>
+                                <a href="CBSTrans1.aspx">
+                                    <!--<i class="fas fa-exchange-alt"></i>-->
+                                    DBT Report</a>
+                            </li>                            
+
+							
+							
+                            <li>
+                                <a href="CBSTrans15.aspx">
+                                    <!--<i class="fas fa-shopping-cart"></i>-->
+                                    Aadhaar Seeding Deseeding Report</a>
+                            </li>
+                             <li>
+                                <a href="atm_cardcnt.aspx">
+                                    <!--<i class="fas fa-shopping-cart"></i>-->
+                                    ATM Card Count Report</a>
+                            </li>
+                            <li>
+                                <a href="CBSTrans5.aspx">
+                                    <!--<i class="fas fa-shopping-cart"></i>-->
+                                    ATM Transaction Report</a>
+                            </li>
+                            <li>
+                                <a href="CBSTrans8.aspx">
+                                    <!--<i class="fas fa-shopping-cart"></i>-->
+                                    Channel Transaction Report</a>
+                            </li>
+                            
+
+                            <li>
+                                <a href="CBSTrans2.aspx">
+                                    <!--<i class="fas fa-mobile-alt"></i>-->
+                                    Internet/Mobile Banking Registration Report</a>
+                            </li>
+                            <li>
+                                <a href="CBSTrans6.aspx">
+                                    <!--<i class="fas fa-shopping-cart"></i>-->
+                                    Nil Transaction Office Report</a>
+                            </li>
+                            <li>
+                                <a href="CBSTrans3.aspx">
+                                    <!--<i class="fas fa-shopping-cart"></i>-->
+                                    Product Wise A/C Report</a>
+                            </li>
+							<li>
+                                <a href="CBSTrans7.aspx">
+                                    <!--<i class="fas fa-shopping-cart"></i>-->
+                                    PAN Validation Report</a>
+                            </li>
+							<li>
+                                <a href="CBSTrans18.aspx">
+                                    <!--<i class="fas fa-shopping-cart"></i>-->
+                                    MSSC Report</a>
+                            </li>
+							<li>
+                                <a href="CBSTrans19.aspx">
+                                    <!--<i class="fas fa-shopping-cart"></i>-->
+                                    CIF Updation Report</a>
+                            </li>
+							
+							<li>
+                                <a href="CBSTrans20.aspx">
+                                    <!--<i class="fas fa-shopping-cart"></i>-->
+                                    BO Account not Opened at AO Report</a>
+                            </li>
+                            <li>
+                                <a href="CBSReports.aspx">
+                                    <!--<i class="fas fa-fw fa-mobile"></i>-->
+                                    Transaction Summary Report</a>
+
+                            </li>
+                            <li>
+                                <a href="CBSTrans10.aspx">
+                                    <!--<i class="fas fa-fw fa-mobile"></i>-->
+                                    APY/PMSBY/PMJJY Report</a>
+
+                            </li>
+                            <li>
+                                <a href="CBSTrans9.aspx">
+                                    <!--<i class="fas fa-fw fa-mobile"></i>-->
+                                    Silent Account Report</a>
+
+                            </li>
+                            <li>
+                                <a href="CBSTrans11.aspx">
+                                    <!--<i class="fas fa-fw fa-mobile"></i>-->
+                                    Live Accounts/Savings Certificates Report</a>
+
+                            </li>
+							<li>
+                                <a href="CBSTrans17.aspx">
+                                    <!--<i class="fas fa-fw fa-mobile"></i>-->
+                                    Live Accounts/Savings Certificates Report for Women and Children</a>
+
+                            </li>							
+
+							<li>
+                                <a href="CBSTrans4.aspx">
+                                    <!--<i class="fas fa-fw fa-mobile"></i>-->
+                                    Silent Account Revival Report</a>
+
+                            </li>
+                            <li>
+                                <a href="CBSTrans13.aspx">
+                                    <!--<i class="fas fa-fw fa-mobile"></i>-->
+                                    SCWF Account Closed Report</a>
+
+                            </li>
+
+                        
+</div>
+
+
+                    </ul>
+                    <div id="pnllogout">
+	
+
+                        <ul class="list-unstyled">
+                            <li class="nav-item">
+                                <a class="nav-link" href="../login.aspx">
+                                    <span style="color: yellow"><i class="fas fa-fw fa-power-off"></i></span>
+                                    <span>Logout</span></a>
+                            </li>
+                        </ul>
+                    
+</div>
+                   <div class="footer">
+                       <p>You are visitor No:<span id="lbl_PageView"></span>
+                        </p>
+                        <p>
+                            <span>Copyright © Indiapost
+                                <span id="lblYear">2026</span></span>
+                        </p>
+                    </div>
+                </div>
+            </nav>
+            <div id="content">
+                <div class="container-fluid">
+                    <div class="card" style="z-index: -1; margin-top: 5px;">
+                        <div class="card-header" style="background-color: #b02a26; height: 54px;">
+                            <center><h3 style="color:white"><span id="lblHeader">Product Wise A/C Report</span></h3></center>
+                        </div>
+                    </div>
+                    <br>
+                    
+
+
+    <div class="row">
+        <!-- ============================================================== -->
+        <!-- basic table  -->
+        <!-- ============================================================== -->
+
+
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+            
+            <div class="card, mt-4">
+
+
+                <div class="card border-warning mb-3">
+                    <div class="card-header"><b>Select Options</b>
+                       <span style="font-size: 14px; opacity: 0.212497;" id="txtblnk">  <u><b><span id="ContentPlaceHolder1_Label3" style="color:#B64830;float:right"> Data Available from: 01/04/2023 </span></b></u> </span>
+                                <br>
+                             <span style="font-size:14px">      <u><b><span id="ContentPlaceHolder1_Label2" style="color:cornflowerblue;float:right">Data Updated upto: 19/08/2026</span></b></u>       </span>                                                
+                    </div>
+                    <div class="card-body">
+
+
+                        <div class="row">
+                            <div class="col-lg-3">
+
+                                <select name="ctl00$ContentPlaceHolder1$CircleDropDown" onchange="javascript:setTimeout('__doPostBack(\'ctl00$ContentPlaceHolder1$CircleDropDown\',\'\')', 0)" id="ContentPlaceHolder1_CircleDropDown" class="form-control" style="border: 2px solid pink;">
+	<option selected="selected" value="Select Circle">Select Circle</option>
+	<option value="Andhra Pradesh Circle">Andhra Pradesh Circle</option>
+	<option value="Assam Circle">Assam Circle</option>
+	<option value="Bihar Circle">Bihar Circle</option>
+	<option value="Chattisgarh Circle">Chattisgarh Circle</option>
+	<option value="Delhi Circle">Delhi Circle</option>
+	<option value="Gujarat Circle">Gujarat Circle</option>
+	<option value="Haryana Circle">Haryana Circle</option>
+	<option value="Himachal Pradesh Circle">Himachal Pradesh Circle</option>
+	<option value="Jammu Kashmir Circle">Jammu Kashmir Circle</option>
+	<option value="Jharkhand Circle">Jharkhand Circle</option>
+	<option value="Karnataka Circle">Karnataka Circle</option>
+	<option value="Kerala Circle">Kerala Circle</option>
+	<option value="Madhya Pradesh Circle">Madhya Pradesh Circle</option>
+	<option value="Maharashtra Circle">Maharashtra Circle</option>
+	<option value="North Eastern Circle">North Eastern Circle</option>
+	<option value="Odisha Circle">Odisha Circle</option>
+	<option value="Punjab Circle">Punjab Circle</option>
+	<option value="Rajasthan Circle">Rajasthan Circle</option>
+	<option value="Tamilnadu Circle">Tamilnadu Circle</option>
+	<option value="Uttar Pradesh Circle">Uttar Pradesh Circle</option>
+	<option value="Uttarakhand Circle">Uttarakhand Circle</option>
+	<option value="West Bengal Circle">West Bengal Circle</option>
+	<option value="Telangana Circle">Telangana Circle</option>
+
+</select>
+
+
+                            </div>
+
+                            <div class="col-lg-3">
+                                <select name="ctl00$ContentPlaceHolder1$RegionDropDown" onchange="javascript:setTimeout('__doPostBack(\'ctl00$ContentPlaceHolder1$RegionDropDown\',\'\')', 0)" id="ContentPlaceHolder1_RegionDropDown" class="form-control" style="border: 2px solid pink;">
+	<option selected="selected" value="Select Region">Select Region</option>
+
+</select>
+                            </div>
+
+                            <div class="col-lg-3">
+                                 <select name="ctl00$ContentPlaceHolder1$DivisionDropDown" onchange="javascript:setTimeout('__doPostBack(\'ctl00$ContentPlaceHolder1$DivisionDropDown\',\'\')', 0)" id="ContentPlaceHolder1_DivisionDropDown" class="form-control" style="border:2px solid pink;">
+	<option selected="selected" value="Select Division">Select Division</option>
+
+</select>
+                             </div>
+                
+                             <div class="col-lg-3">
+                                    <select name="ctl00$ContentPlaceHolder1$SubDivisionDropDown" onchange="javascript:setTimeout('__doPostBack(\'ctl00$ContentPlaceHolder1$SubDivisionDropDown\',\'\')', 0)" id="ContentPlaceHolder1_SubDivisionDropDown" class="form-control" style="border:2px solid pink;">
+	<option selected="selected" value="Select SubDivision">Select SubDivision</option>
+
+</select>
+                              </div>
+
+                            <div class="col-lg-3">
+                                
+                            </div>
+
+
+
+                        </div>
+
+                        <div class="row">
+                            <div class="col-3">
+                                Start Date:
+                                            
+                        <input name="ctl00$ContentPlaceHolder1$startDate" type="text" value="21-08-2026" id="ContentPlaceHolder1_startDate" class="form-control dtpic hasDatepicker" style="border-color: pink; border-bottom-width: 4px; border-style: solid;">
+
+                            </div>
+                            <div class="col-3">
+                                End Date:
+                                           
+                            <input name="ctl00$ContentPlaceHolder1$endDate" type="text" value="21-08-2026" id="ContentPlaceHolder1_endDate" class="form-control dtpic hasDatepicker" style="border-color: pink; border-bottom-width: 4px; border-style: solid;">
+                            </div>
+
+                            <div class="col-3 mt-4">
+                                
+                                <div class="bs-example">
+                                    <div class="btn-group">
+                                        <button onclick="__doPostBack('ctl00$ContentPlaceHolder1$ctl00','')" class="btn btn-danger">Submit</button>
+
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                        
+                        <div class="row mt-3">
+                            <div class="col-4">
+                                <b><input id="ContentPlaceHolder1_ACO" type="radio" name="ctl00$ContentPlaceHolder1$Group1" value="ACO" onclick="javascript:setTimeout('__doPostBack(\'ctl00$ContentPlaceHolder1$ACO\',\'\')', 0)" style=""><label for="ContentPlaceHolder1_ACO"> Account Opened Details</label></b>
+                            </div>
+                            <div class="col-3">
+								<b><input id="ContentPlaceHolder1_ACC" type="radio" name="ctl00$ContentPlaceHolder1$Group1" value="ACC" onclick="javascript:setTimeout('__doPostBack(\'ctl00$ContentPlaceHolder1$ACC\',\'\')', 0)" style=""><label for="ContentPlaceHolder1_ACC"> Account Closed Details</label></b>                             
+                            </div>
+                            <div class="col-4">
+                                <b><input id="ContentPlaceHolder1_NET" type="radio" name="ctl00$ContentPlaceHolder1$Group1" value="NET" onclick="javascript:setTimeout('__doPostBack(\'ctl00$ContentPlaceHolder1$NET\',\'\')', 0)" style=""><label for="ContentPlaceHolder1_NET"> Net Addition of Accounts, Certificates and MSSC</label></b>
+                            </div>
+                        </div>
+
+
+                    </div>
+                </div>
+
+
+
+
+                <u><b>
+                    <span id="ContentPlaceHolder1_Label1" style="color: coral">Product Wise A/C Report</span></b></u>
+
+
+                
+                
+                <div class="card-body">
+                    <div class="table-responsive">
+                        
+
+
+                        
+
+
+
+
+                        
+                         
+
+
+                          
+
+
+                      
+
+                    </div>
+                </div>
+                <!-- ============================================================== -->
+                <!-- end basic table  -->
+                <!-- ============================================================== -->
+            </div>
+        </div>
+    </div>
+    <script>
+        $(document).ready(function () {
+            $('#example').DataTable({
+
+                "footerCallback": function (row, data, start, end, display) {
+                    var api = this.api(), data;
+
+
+                    nb_cols = api.columns().nodes().length;
+                    var j = 1;
+
+                    while (j < nb_cols) {
+                        var pageTotal = api
+                            .column(j, { page: 'current' })
+                            .data()
+                            .reduce(function (a, b) {
+                                return Number(a) + Number(b);
+                                //return (a).tofixed + (b).tofixed;
+                            }, 0);
+                        // Update footer
+                        $(api.column(j).footer()).html(pageTotal);
+                        j++;
+                    }
+
+                    // Remove the formatting to get integer data for summation
+
+
+                },
+
+
+
+                dom: 'Bifrtp',
+                "lengthMenu": [[25, 50, 100, -1], [25, 50, 100, "All"]],
+                buttons: [
+                    'pageLength',
+                    { extend: 'copy', footer: true },
+                    { extend: 'excel', footer: true },
+                    { extend: 'print', footer: true }
+                ]
+
+            });
+        });
+        $('#example1').DataTable({
+
+            "footerCallback": function (row, data, start, end, display) {
+                var api = this.api(), data;
+
+
+                nb_cols = api.columns().nodes().length;
+                var j = 3;
+
+                while (j < nb_cols) {
+                    var pageTotal = api
+                        .column(j, { page: 'current' })
+                        .data()
+                        .reduce(function (a, b) {
+                            return Number(a) + Number(b);
+                            //return (a).tofixed + (b).tofixed;
+                        }, 0);
+                    // Update footer
+                    $(api.column(j).footer()).html(pageTotal);
+                    j++;
+                }
+
+                // Remove the formatting to get integer data for summation
+
+
+            },
+
+
+
+            dom: 'Bifrtp',
+            "lengthMenu": [[25, 50, 100, -1], [25, 50, 100, "All"]],
+            buttons: [
+                'pageLength',
+                { extend: 'copy', footer: true },
+                { extend: 'excel', footer: true },
+                { extend: 'print', footer: true }
+            ]
+
+        });
+        $('#example3').DataTable({
+
+            "footerCallback": function (row, data, start, end, display) {
+                var api = this.api(), data;
+
+
+                nb_cols = api.columns().nodes().length;
+                var j = 1;
+
+                while (j < nb_cols) {
+                    var pageTotal = api
+                        .column(j, { page: 'current' })
+                        .data()
+                        .reduce(function (a, b) {
+                            return Number(a) + Number(b);
+                            //return (a).tofixed + (b).tofixed;
+                        }, 0);
+                    // Update footer
+                    $(api.column(j).footer()).html(pageTotal);
+                    j++;
+                }
+
+                // Remove the formatting to get integer data for summation
+
+
+            },
+
+
+            dom: 'Bifrtp',
+            "lengthMenu": [[25, 50, 100, -1], [25, 50, 100, "All"]],
+            buttons: [
+                'pageLength',
+                { extend: 'copy', footer: true },
+                { extend: 'excel', footer: true },
+                { extend: 'print', footer: true }
+            ]
+
+        });
+        $('#example4').DataTable({
+
+            "footerCallback": function (row, data, start, end, display) {
+                var api = this.api(), data;
+
+
+                nb_cols = api.columns().nodes().length;
+                var j = 1;
+
+                while (j < nb_cols) {
+                    var pageTotal = api
+                        .column(j, { page: 'current' })
+                        .data()
+                        .reduce(function (a, b) {
+                            return Number(a) + Number(b);
+                            //return (a).tofixed + (b).tofixed;
+                        }, 0);
+                    // Update footer
+                    $(api.column(j).footer()).html(pageTotal);
+                    j++;
+                }
+
+                // Remove the formatting to get integer data for summation
+
+
+            },
+
+
+
+            dom: 'Bifrtp',
+            "lengthMenu": [[25, 50, 100, -1], [25, 50, 100, "All"]],
+            buttons: [
+                'pageLength',
+                { extend: 'copy', footer: true },
+                { extend: 'excel', footer: true },
+                { extend: 'print', footer: true }
+            ]
+
+        });
+    </script>
+    <script type="text/javascript">
+        $(".dtpic").datepicker({
+            dateFormat: "dd-mm-yy",
+			yearRange: '2023:2026',
+			minDate: new Date(2023,3,1),
+            maxDate: '-1d'
+
+        });
+    </script>
+     <script>
+         $(function () {
+             blinkeffect('#txtblnk');
+         })
+         function blinkeffect(selector) {
+             $(selector).fadeOut('slow', function () {
+                 $(this).fadeIn('slow', function () {
+                     blinkeffect(this);
+                 });
+             });
+         }
+
+     </script>
+
+                </div>
+            </div>
+        </div>
+    </form><div id="ui-datepicker-div" class="ui-datepicker ui-widget ui-widget-content ui-helper-clearfix ui-corner-all"></div>
+    <script src="../Library/js/main.js"></script>
+    <script src="../Library/js/popper.js"></script>
+    <script src="../Library/js/bootstrap.min.js"></script>
+
+
+</body></html>
