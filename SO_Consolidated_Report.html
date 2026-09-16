@@ -1,13 +1,37 @@
 <!doctype html>
 <html><head><meta charset="utf-8"><title>SO-wise Consolidated Report</title>
 <style>
-@page{size:A4 landscape;margin:9mm}body{font-family:Arial,sans-serif;color:#17202a;margin:0}
+@page{size:A4 portrait;margin:9mm}body{font-family:Arial,sans-serif;color:#17202a;margin:0}
 h1{margin:0;color:#173f5f;font-size:22px}.sub{margin:6px 0 14px;color:#56616b;font-weight:bold}
 table{width:100%;border-collapse:collapse;font-size:9px}th{background:#173f5f;color:white;padding:7px 5px;text-align:left}
 td{padding:5px;border-bottom:1px solid #d9dee3}tr:nth-child(even){background:#f5f7f9}
 .num{text-align:right}.footer{margin-top:10px;font-size:8px;color:#666}
+</style><style id="universal-report-print-css">
+@page{size:A4 portrait;margin:10mm}
+.report-actions{display:flex;gap:10px;justify-content:flex-end;margin:12px 0 16px}
+.report-actions button{padding:9px 16px;border:0;border-radius:6px;cursor:pointer;font-size:13px;font-weight:700;background:#173f5f;color:#fff}
+.report-actions button.export{background:#2e7d32}
+@media print{.report-actions{display:none!important}body{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}}
 </style></head><body>
-<h1>SO-wise Consolidated Report</h1><div class="sub">Gudivada Sub Division | As on Date: 16-09-2026</div>
+<h1>SO-wise Consolidated Report</h1><div class="report-actions" id="report-actions">
+<button type="button" onclick="saveReportAsPDF()">Save as PDF / Print</button>
+<button type="button" class="export" onclick="exportReportCSV()">Export Report</button>
+</div><div class="sub">Gudivada Sub Division | As on Date: 16-09-2026</div>
 <table><thead><tr><th>SO Name</th><th>BOs</th><th>Combined Target</th><th>Prop. Target</th><th>Net Accounts</th><th>Achievement %</th><th>Yet to Achieve</th></tr></thead><tbody><tr><td>Mudunuru S.O</td><td>2</td><td>1,200</td><td>600</td><td>623</td><td>103.83%</td><td>0</td></tr><tr><td>Ventrapragada S.O</td><td>4</td><td>1,800</td><td>900</td><td>755</td><td>83.89%</td><td>145</td></tr><tr><td>Rudrapaka S.O</td><td>5</td><td>2,100</td><td>1,050</td><td>805</td><td>76.67%</td><td>245</td></tr><tr><td>Indupalli S.O</td><td>3</td><td>1,500</td><td>750</td><td>508</td><td>67.73%</td><td>242</td></tr><tr><td>Moturu S.O</td><td>5</td><td>2,100</td><td>1,050</td><td>696</td><td>66.29%</td><td>354</td></tr><tr><td>Vunguturu S.O (Krishna)</td><td>6</td><td>2,400</td><td>1,200</td><td>794</td><td>66.17%</td><td>406</td></tr><tr><td>Angaluru S.O</td><td>5</td><td>2,100</td><td>1,050</td><td>645</td><td>61.43%</td><td>405</td></tr><tr><td>Pedamaddali S.O</td><td>1</td><td>900</td><td>450</td><td>276</td><td>61.33%</td><td>174</td></tr><tr><td>Janardhanapuram S.O</td><td>10</td><td>3,600</td><td>1,800</td><td>1,098</td><td>61.00%</td><td>702</td></tr><tr><td>Rajendranagar Colony S.O</td><td>0</td><td>600</td><td>300</td><td>153</td><td>51.00%</td><td>147</td></tr><tr><td>Manikonda S.O</td><td>5</td><td>2,100</td><td>1,050</td><td>530</td><td>50.48%</td><td>520</td></tr><tr><td>Golvepalli (Zami) S.O</td><td>5</td><td>2,100</td><td>1,050</td><td>515</td><td>49.05%</td><td>535</td></tr><tr><td>Mudinepalli S.O</td><td>13</td><td>4,500</td><td>2,250</td><td>1,007</td><td>44.76%</td><td>1,243</td></tr><tr><td>Tamirisa S.O</td><td>6</td><td>2,400</td><td>1,200</td><td>501</td><td>41.75%</td><td>699</td></tr><tr><td>Elamarru S.O</td><td>2</td><td>1,200</td><td>600</td><td>210</td><td>35.00%</td><td>390</td></tr></tbody></table>
 <div class="footer">Generated automatically from Gudivada_Net_Accounts_Latest.xlsx</div>
-</body></html>
+<script id="universal-report-actions-js">
+function saveReportAsPDF(){window.print();}
+function exportReportCSV(){
+ const table=document.querySelector("table"); if(!table){alert("Report table not found.");return;}
+ const rows=[]; table.querySelectorAll("tr").forEach(row=>{
+  const cells=[]; row.querySelectorAll("th,td").forEach(cell=>{
+   const v=cell.innerText.replace(/"/g,'""').replace(/\s+/g,' ').trim();
+   cells.push('"'+v+'"');
+  }); if(cells.length)rows.push(cells.join(","));
+ });
+ const blob=new Blob([rows.join("\r\n")],{type:"text/csv;charset=utf-8;"});
+ const url=URL.createObjectURL(blob),a=document.createElement("a");
+ a.href=url;a.download=(document.title||"Report").replace(/[^a-z0-9]+/gi,"_")+".csv";
+ document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);
+}
+</script></body></html>
