@@ -1,37 +1,60 @@
 <!doctype html>
 <html><head><meta charset="utf-8"><title>SO + HO Performance Report</title>
-<style>
-@page{size:A4 portrait;margin:9mm}body{font-family:Arial,sans-serif;color:#17202a;margin:0}
-h1{margin:0;color:#173f5f;font-size:22px}.sub{margin:6px 0 14px;color:#56616b;font-weight:bold}
-table{width:100%;border-collapse:collapse;font-size:9px}th{background:#173f5f;color:white;padding:7px 5px;text-align:left}
-td{padding:5px;border-bottom:1px solid #d9dee3}tr:nth-child(even){background:#f5f7f9}
-.num{text-align:right}.footer{margin-top:10px;font-size:8px;color:#666}
-</style><style id="universal-report-print-css">
-@page{size:A4 portrait;margin:10mm}
+
+<style id="gv-report-style">
+@page{size:A4 portrait;margin:9mm}
+*{box-sizing:border-box}
+body{font-family:Arial,sans-serif;color:#17202a;background:#fff;margin:0}
+h1{margin:0;color:#173f5f;font-size:22px}
+.sub{margin:6px 0 14px;color:#56616b;font-weight:700}
 .report-actions{display:flex;gap:10px;justify-content:flex-end;margin:12px 0 16px}
 .report-actions button{padding:9px 16px;border:0;border-radius:6px;cursor:pointer;font-size:13px;font-weight:700;background:#173f5f;color:#fff}
 .report-actions button.export{background:#2e7d32}
-@media print{.report-actions{display:none!important}body{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}}
-</style></head><body>
-<h1>SO + HO Performance Report</h1><div class="report-actions" id="report-actions">
+table{width:100%;border-collapse:collapse;font-size:9px}
+th{background:#173f5f;color:#fff;padding:7px 5px;text-align:left}
+td{padding:5px;border-bottom:1px solid #d9dee3}
+tbody tr:nth-child(even){background:#f3f7fa}
+tbody tr:hover{background:#e7f0f6}
+.footer{margin-top:10px;font-size:8px;color:#666}
+@media print{
+ .report-actions{display:none!important}
+ body{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
+}
+</style>
+</head><body>
+<h1>SO + HO Performance Report</h1>
+<div class="sub">Gudivada Sub Division | As on Date: 16-09-2026</div>
+
+<div class="report-actions" id="report-actions">
 <button type="button" onclick="saveReportAsPDF()">Save as PDF / Print</button>
 <button type="button" class="export" onclick="exportReportCSV()">Export Report</button>
-</div><div class="sub">Gudivada Sub Division | As on Date: 16-09-2026</div>
+</div>
+
 <table><thead><tr><th>Office Name</th><th>Type</th><th>Opened</th><th>Closed</th><th>Net Accounts</th><th>Annual Target</th><th>Prop. Target</th><th>Achievement %</th><th>Yet to Achieve</th></tr></thead><tbody><tr><td>Angaluru S.O</td><td>SO</td><td>453</td><td>66</td><td>387</td><td>600</td><td>300</td><td>129.00%</td><td>0</td></tr><tr><td>Ventrapragada S.O</td><td>SO</td><td>401</td><td>55</td><td>346</td><td>600</td><td>300</td><td>115.33%</td><td>0</td></tr><tr><td>Vunguturu S.O (Krishna)</td><td>SO</td><td>384</td><td>68</td><td>316</td><td>600</td><td>300</td><td>105.33%</td><td>0</td></tr><tr><td>Rudrapaka S.O</td><td>SO</td><td>328</td><td>35</td><td>293</td><td>600</td><td>300</td><td>97.67%</td><td>7</td></tr><tr><td>Mudunuru S.O</td><td>SO</td><td>360</td><td>93</td><td>267</td><td>600</td><td>300</td><td>89.00%</td><td>33</td></tr><tr><td>Moturu S.O</td><td>SO</td><td>310</td><td>52</td><td>258</td><td>600</td><td>300</td><td>86.00%</td><td>42</td></tr><tr><td>Mudinepalli S.O</td><td>SO</td><td>521</td><td>276</td><td>245</td><td>600</td><td>300</td><td>81.67%</td><td>55</td></tr><tr><td>Pedamaddali S.O</td><td>SO</td><td>243</td><td>30</td><td>213</td><td>600</td><td>300</td><td>71.00%</td><td>87</td></tr><tr><td>Indupalli S.O</td><td>SO</td><td>323</td><td>129</td><td>194</td><td>600</td><td>300</td><td>64.67%</td><td>106</td></tr><tr><td>Manikonda S.O</td><td>SO</td><td>231</td><td>56</td><td>175</td><td>600</td><td>300</td><td>58.33%</td><td>125</td></tr><tr><td>Rajendranagar Colony S.O</td><td>SO</td><td>385</td><td>232</td><td>153</td><td>600</td><td>300</td><td>51.00%</td><td>147</td></tr><tr><td>Gudivada H.O</td><td>HO</td><td>1,388</td><td>891</td><td>497</td><td>2,000</td><td>1,000</td><td>49.70%</td><td>503</td></tr><tr><td>Golvepalli (Zami) S.O</td><td>SO</td><td>148</td><td>13</td><td>135</td><td>600</td><td>300</td><td>45.00%</td><td>165</td></tr><tr><td>Tamirisa S.O</td><td>SO</td><td>177</td><td>58</td><td>119</td><td>600</td><td>300</td><td>39.67%</td><td>181</td></tr><tr><td>Janardhanapuram S.O</td><td>SO</td><td>205</td><td>90</td><td>115</td><td>600</td><td>300</td><td>38.33%</td><td>185</td></tr><tr><td>Elamarru S.O</td><td>SO</td><td>147</td><td>61</td><td>86</td><td>600</td><td>300</td><td>28.67%</td><td>214</td></tr></tbody></table>
 <div class="footer">Generated automatically from Gudivada_Net_Accounts_Latest.xlsx</div>
-<script id="universal-report-actions-js">
+
+<script id="gv-report-js">
 function saveReportAsPDF(){window.print();}
 function exportReportCSV(){
- const table=document.querySelector("table"); if(!table){alert("Report table not found.");return;}
- const rows=[]; table.querySelectorAll("tr").forEach(row=>{
-  const cells=[]; row.querySelectorAll("th,td").forEach(cell=>{
-   const v=cell.innerText.replace(/"/g,'""').replace(/\s+/g,' ').trim();
-   cells.push('"'+v+'"');
-  }); if(cells.length)rows.push(cells.join(","));
+ const table=document.querySelector("table");
+ if(!table){alert("Report table not found.");return;}
+ const rows=[];
+ table.querySelectorAll("tr").forEach(row=>{
+   const cells=[];
+   row.querySelectorAll("th,td").forEach(cell=>{
+     const v=cell.innerText.replace(/"/g,'""').replace(/\s+/g,' ').trim();
+     cells.push('"'+v+'"');
+   });
+   if(cells.length) rows.push(cells.join(","));
  });
  const blob=new Blob([rows.join("\r\n")],{type:"text/csv;charset=utf-8;"});
- const url=URL.createObjectURL(blob),a=document.createElement("a");
- a.href=url;a.download=(document.title||"Report").replace(/[^a-z0-9]+/gi,"_")+".csv";
- document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);
+ const url=URL.createObjectURL(blob);
+ const a=document.createElement("a");
+ a.href=url;
+ a.download=(document.title||"Report").replace(/[^a-z0-9]+/gi,"_")+".csv";
+ document.body.appendChild(a);a.click();a.remove();
+ URL.revokeObjectURL(url);
 }
-</script></body></html>
+</script>
+
+</body></html>
