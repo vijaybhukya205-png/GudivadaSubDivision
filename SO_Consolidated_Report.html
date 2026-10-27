@@ -21,14 +21,17 @@ tbody tr:hover{background:#e7f0f6}
  body{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
 }
 </style>
-</head><body>
-<h1>SO-wise Consolidated Report</h1>
-<div class="sub">Gudivada Sub Division | As on Date: 12-10-2026</div>
-
-<div class="report-actions" id="report-actions">
+<style id="universal-report-print-css">
+@page{size:A4 portrait;margin:10mm}
+.report-actions{display:flex;gap:10px;justify-content:flex-end;margin:12px 0 16px}
+.report-actions button{padding:9px 16px;border:0;border-radius:6px;cursor:pointer;font-size:13px;font-weight:700;background:#173f5f;color:#fff}
+.report-actions button.export{background:#2e7d32}
+@media print{.report-actions{display:none!important}body{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}}
+</style></head><body>
+<h1>SO-wise Consolidated Report</h1><div class="report-actions" id="report-actions">
 <button type="button" onclick="saveReportAsPDF()">Save as PDF / Print</button>
 <button type="button" class="export" onclick="exportReportCSV()">Export Report</button>
-</div>
+</div><div class="sub">Gudivada Sub Division | As on Date: 12-10-2026</div>
 
 <table><thead><tr><th>SO Name</th><th>BOs</th><th>Combined Target</th><th>Prop. Target</th><th>Net Accounts</th><th>Achievement %</th><th>Yet to Achieve</th></tr></thead><tbody><tr><td>Mudunuru S.O</td><td>2</td><td>1,200</td><td>700</td><td>683</td><td>97.57%</td><td>17</td></tr><tr><td>Ventrapragada S.O</td><td>4</td><td>1,800</td><td>1,050</td><td>931</td><td>88.67%</td><td>119</td></tr><tr><td>Rudrapaka S.O</td><td>5</td><td>2,100</td><td>1,225</td><td>989</td><td>80.73%</td><td>236</td></tr><tr><td>Indupalli S.O</td><td>3</td><td>1,500</td><td>875</td><td>706</td><td>80.69%</td><td>169</td></tr><tr><td>Vunguturu S.O (Krishna)</td><td>6</td><td>2,400</td><td>1,400</td><td>1,046</td><td>74.71%</td><td>354</td></tr><tr><td>Moturu S.O</td><td>5</td><td>2,100</td><td>1,225</td><td>887</td><td>72.41%</td><td>338</td></tr><tr><td>Angaluru S.O</td><td>5</td><td>2,100</td><td>1,225</td><td>859</td><td>70.12%</td><td>366</td></tr><tr><td>Janardhanapuram S.O</td><td>10</td><td>3,600</td><td>2,100</td><td>1,343</td><td>63.95%</td><td>757</td></tr><tr><td>Mudinepalli S.O</td><td>13</td><td>4,500</td><td>2,625</td><td>1,647</td><td>62.74%</td><td>978</td></tr><tr><td>Pedamaddali S.O</td><td>1</td><td>900</td><td>525</td><td>303</td><td>57.71%</td><td>222</td></tr><tr><td>Rajendranagar Colony S.O</td><td>0</td><td>600</td><td>350</td><td>200</td><td>57.14%</td><td>150</td></tr><tr><td>Golvepalli (Zami) S.O</td><td>5</td><td>2,100</td><td>1,225</td><td>684</td><td>55.84%</td><td>541</td></tr><tr><td>Manikonda S.O</td><td>5</td><td>2,100</td><td>1,225</td><td>667</td><td>54.45%</td><td>558</td></tr><tr><td>Tamirisa S.O</td><td>6</td><td>2,400</td><td>1,400</td><td>653</td><td>46.64%</td><td>747</td></tr><tr><td>Elamarru S.O</td><td>2</td><td>1,200</td><td>700</td><td>290</td><td>41.43%</td><td>410</td></tr></tbody></table>
 <div class="footer">Generated automatically from Gudivada_Net_Accounts_Latest.xlsx</div>
@@ -57,4 +60,19 @@ function exportReportCSV(){
 }
 </script>
 
-</body></html>
+<script id="universal-report-actions-js">
+function saveReportAsPDF(){window.print();}
+function exportReportCSV(){
+ const table=document.querySelector("table"); if(!table){alert("Report table not found.");return;}
+ const rows=[]; table.querySelectorAll("tr").forEach(row=>{
+  const cells=[]; row.querySelectorAll("th,td").forEach(cell=>{
+   const v=cell.innerText.replace(/"/g,'""').replace(/\s+/g,' ').trim();
+   cells.push('"'+v+'"');
+  }); if(cells.length)rows.push(cells.join(","));
+ });
+ const blob=new Blob([rows.join("\r\n")],{type:"text/csv;charset=utf-8;"});
+ const url=URL.createObjectURL(blob),a=document.createElement("a");
+ a.href=url;a.download=(document.title||"Report").replace(/[^a-z0-9]+/gi,"_")+".csv";
+ document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);
+}
+</script></body></html>
